@@ -36,3 +36,5 @@ COMMANDS:
     git branch -M main
 11. Pushing to remote branch with changes
     git push -u origin main     #after changes
+12. Pulling Changes from remote repo
+    git pull origin <branchname>
