@@ -1,0 +1,26 @@
+{
+  "name": "project-capstone",
+  "version": "1.0.0",
+  "description": "This is capstone project backend created using NodeJS and ExpressJS.",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/armaansinghjaj/Wedd.git"
+  },
+  "author": "Armaan Singh Jaj",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/armaansinghjaj/Wedd/issues"
+  },
+  "homepage": "https://github.com/armaansinghjaj/Wedd#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.19"
+  }
+}
