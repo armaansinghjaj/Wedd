@@ -1,0 +1,40 @@
+<%- include("header") -%>
+
+<h1>Need other services?</h1>
+<form>
+    <label>Name:</label>
+    <input type="text" name="name"><br>
+    <label>Address:</label>
+    <input type="text" name="address"><br>
+    <label>Phone:</label>
+    <input type="text" name="phone"><br>
+    <label>What services are you looking for?</label>
+    <table>
+        <tr>
+            <td><input type="radio" name="services" value="shuttle"></td>
+            <td>Ride: Shuttle (Our car)</td>
+        </tr>
+        <tr>
+            <td><input type="radio" name="services" value="chauffeur"></td>
+            <td>Ride: Chauffeur (Your car)</td>
+        </tr>
+        <tr>
+            <td><input type="radio" name="services" value="drive"></td>
+            <td>Drive: Apply to be a driver</td>
+        </tr>
+        <tr>
+            <td><input type="radio" name="services" value="own"></td>
+            <td>Own: Request to open a franchise</td>
+        </tr>
+    </table>
+    
+    <label>Email:</label>
+    <input type="email" name="email"><br>
+    <label>Comments:</label>
+    <input type="text" name="comments"><br>
+    <input type="checkbox" name="consent"> I consent to receive 'We DD' updates and newsletters via email.<br>
+    <input type="submit">
+</form>
+
+
+<%- include("footer") -%>
