@@ -10,8 +10,8 @@ const port = process.env.port || 80;
 // Handling routes
 // description: use the anyRoute.js file from routes folder to handle endpoints that startes with /anyRoute
 
-const anyRoute = require(__dirname+"/routes/anyROute");
-app.use("/anyRouter", anyRoute)
+// const anyRoute = require(__dirname+"/routes/anyROute");
+// app.use("/anyRouter", anyRoute)
 
 // route methods
 app.get("/", (req, res)=>{
