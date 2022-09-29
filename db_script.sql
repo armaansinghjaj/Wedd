@@ -151,3 +151,10 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`background` (
   `contact_page` VARCHAR(255),
   `news_page`, VARCHAR(255)
 );
+
+insert into driver (driver_id, email , first_name,last_name,password)
+values(null,armaan@gmail.com,armaan,singh,munni);
+insert into driver (driver_id, email , first_name,last_name,password)
+values(null,prince@gmail.com,prince,agam,basanti);
+insert into driver (driver_id, email , first_name,last_name,password)
+values(null,daniel@gmail.com,daniel,wong,daniel);
