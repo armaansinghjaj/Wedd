@@ -129,3 +129,12 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`current_rides` (
     FOREIGN KEY (`customer_id`)
     REFERENCES `wedddb`.`customer` (`customer_id`)
 );
+
+-- -----------------------------------------------------
+-- Table `wedddb`.`current_rides`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wedddb`.`news` (
+  `date` DATE,
+  `headline` VARCHAR(500),
+  `message` VARCHAR(1000)
+);
