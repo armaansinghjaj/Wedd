@@ -38,6 +38,10 @@ app.get("/login", (req, res)=>{
     // res.send("Hello World!");
     res.render("login", {year: new Date().getFullYear(), title: "Login"});
 })
+app.get("/admin", (req, res)=>{
+    // res.send("Hello World!");
+    res.render("admin");
+})
 
 // using shorthand to access '/contact' both for get and post request
 // app
