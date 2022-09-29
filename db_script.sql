@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`customer_car` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`customer` (
   `customer_id` INT(10) NOT NULL AUTO_INCREMENT,
+  `customer_pp` VARCHAR(255),
   `car_id` INT(10), -- make it null after ride completion
   `email` VARCHAR(40) NOT NULL,
   `first_name` VARCHAR(20) NOT NULL,
@@ -46,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`customer` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`driver` (
   `driver_id` INT(10) NOT NULL AUTO_INCREMENT,
+  `driver_pp` VARCHAR(255),
   `email` VARCHAR(40) NOT NULL,
   `first_name` VARCHAR(20) NOT NULL,
   `last_name` VARCHAR(20) NOT NULL,
@@ -131,10 +133,21 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`current_rides` (
 );
 
 -- -----------------------------------------------------
--- Table `wedddb`.`current_rides`
+-- Table `wedddb`.`news`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`news` (
   `date` DATE,
   `headline` VARCHAR(500),
-  `message` VARCHAR(1000)
+  `message` VARCHAR(1000),
+  `color` VARCHAR(50)
+);
+
+-- -----------------------------------------------------
+-- Table `wedddb`.`background`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wedddb`.`background` (
+  `home_page` VARCHAR(255),
+  `about_page` VARCHAR(255),
+  `contact_page` VARCHAR(255),
+  `news_page`, VARCHAR(255)
 );
