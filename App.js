@@ -42,6 +42,16 @@ app.get("/admin", (req, res)=>{
     // res.send("Hello World!");
     res.render("admin");
 })
+app.get("/drivers", (req, res)=>{
+    // res.send("Hello World!");
+    res.render("drivers");
+})
+app.post("/drivers", (req, res)=>{
+    // res.send("Hello World!");
+    let action = req.body.action;
+    
+    res.render("drivers");
+})
 
 // using shorthand to access '/contact' both for get and post request
 // app
