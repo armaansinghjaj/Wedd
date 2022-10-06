@@ -2,10 +2,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+var mysql = require('mysql');
 app.set('view engine', 'ejs'); // uncomment when using ejs
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public")); // uncomment when using CSS or images in the project
 const port = process.env.port || 80;
+
+var pool = mysql.createPool({
+    connectionLimit:100,
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "password",
+    database: "wedddb"
+});
 
 // Handling routes
 // description: use the anyRoute.js file from routes folder to handle endpoints that startes with /anyRoute
@@ -50,6 +60,168 @@ app.post("/login", (req, res)=>{
 app.get("/admin", (req, res)=>{
     // res.send("Hello World!");
     res.render("admin");
+})
+app.get("/drivers", (req, res)=>{
+    // res.send("Hello World!");
+    var resultobj;
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`SELECT * FROM driver `, function (err, result, fields) {
+    
+            con.release();
+            console.log(result)
+            resultobj = {
+                drivers:result
+            }
+            res.render("drivers",resultobj);
+        });
+    });
+    
+})
+app.post("/drivers", (req, res)=>{
+    // res.send("Hello World!");
+    let action = req.body.action;
+    if (action=='edit') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    drivers:result
+                }
+                res.render("drivers",resultobj);
+            });
+        });
+        
+    }
+    if (action=='delete') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    drivers:result
+                }
+                res.render("drivers",resultobj);
+            });
+        });
+        
+    }
+    if (action=='update') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    drivers:result
+                }
+                res.render("drivers",resultobj);
+            });
+        });
+        
+    }
+    if (action=='add') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    drivers:result
+                }
+                res.render("drivers",resultobj);
+            });
+        });
+        
+    }
+})
+app.get("/admins", (req, res)=>{
+    // res.send("Hello World!");
+    var resultobj;
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`SELECT * FROM admin `, function (err, result, fields) {
+    
+            con.release();
+            console.log(result)
+            resultobj = {
+                admins:result
+            }
+            res.render("admins",resultobj);
+        });
+    });
+    
+})
+app.post("/admins", (req, res)=>{
+    // res.send("Hello World!");
+    let action = req.body.action;
+    if (action=='edit') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    admins:result
+                }
+                res.render("admins",resultobj);
+            });
+        });
+        
+    }
+    if (action=='delete') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    admins:result
+                }
+                res.render("admins",resultobj);
+            });
+        });
+        
+    }
+    if (action=='update') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    admins:result
+                }
+                res.render("admins",resultobj);
+            });
+        });
+        
+    }
+    if (action=='add') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    admins:result
+                }
+                res.render("admins",resultobj);
+            });
+        });
+        
+    }
 })
 
 // using shorthand to access '/contact' both for get and post request

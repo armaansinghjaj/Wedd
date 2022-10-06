@@ -149,5 +149,22 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`background` (
   `home_page` VARCHAR(255),
   `about_page` VARCHAR(255),
   `contact_page` VARCHAR(255),
-  `news_page`, VARCHAR(255)
+  `news_page` VARCHAR(255)
 );
+
+insert into driver (driver_id, email , first_name,last_name,password)
+values(null,'armaan@gmail.com','armaan','singh','munni');
+insert into driver (driver_id, email , first_name,last_name,password)
+values(null,'prince@gmail.com','prince','agam','basanti');
+insert into driver (driver_id, email , first_name,last_name,password)
+values(null,'daniel@gmail.com','daniel','wong','daniel');
+
+insert into background
+values ("image/IMG_5954.JPEG",null,null,null);
+
+insert into admin (admin_id, email , first_name,last_name,password)
+values(null,'armaan@gmail.com','armaan','singh','munni');
+insert into admin (admin_id, email , first_name,last_name,password)
+values(null,'prince@gmail.com','prince','agam','basanti');
+insert into admin (admin_id, email , first_name,last_name,password)
+values(null,'daniel@gmail.com','daniel','wong','daniel');
