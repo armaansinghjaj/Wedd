@@ -161,3 +161,10 @@ values(null,'daniel@gmail.com','daniel','wong','daniel');
 
 insert into background
 values ("image/IMG_5954.JPEG",null,null,null);
+
+insert into admin (admin_id, email , first_name,last_name,password)
+values(null,'armaan@gmail.com','armaan','singh','munni');
+insert into admin (admin_id, email , first_name,last_name,password)
+values(null,'prince@gmail.com','prince','agam','basanti');
+insert into admin (admin_id, email , first_name,last_name,password)
+values(null,'daniel@gmail.com','daniel','wong','daniel');

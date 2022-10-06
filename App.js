@@ -54,13 +54,14 @@ app.get("/admin", (req, res)=>{
 })
 app.get("/drivers", (req, res)=>{
     // res.send("Hello World!");
+    var resultobj;
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM driver `, function (err, result, fields) {
     
             con.release();
             console.log(result)
-            var resultobj = {
+            resultobj = {
                 drivers:result
             }
             res.render("drivers",resultobj);
@@ -71,27 +72,7 @@ app.get("/drivers", (req, res)=>{
 app.post("/drivers", (req, res)=>{
     // res.send("Hello World!");
     let action = req.body.action;
-    if (action==edit) {
-        pool.getConnection((err, con)=>{
-            if (err) throw err;
-            con.query(`SELECT * FROM driver`, function (err, result, fields) {
-        
-                con.release();
-                var resultobj = {
-                    drivers:result
-                }
-                con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
-                    con.release()
-                    var resobj = {
-                        req.body.edit_driver_id
-                    }
-                    
-                res.render("drivers",resultobj,resobj);
-            });
-        });
-        
-    }
-    if (action==delete) {
+    if (action=='edit') {
         pool.getConnection((err, con)=>{
             if (err) throw err;
             con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
@@ -106,7 +87,7 @@ app.post("/drivers", (req, res)=>{
         });
         
     }
-    if (action==update) {
+    if (action=='delete') {
         pool.getConnection((err, con)=>{
             if (err) throw err;
             con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
@@ -121,7 +102,7 @@ app.post("/drivers", (req, res)=>{
         });
         
     }
-    if (action==add) {
+    if (action=='update') {
         pool.getConnection((err, con)=>{
             if (err) throw err;
             con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
@@ -132,6 +113,102 @@ app.post("/drivers", (req, res)=>{
                     drivers:result
                 }
                 res.render("drivers",resultobj);
+            });
+        });
+        
+    }
+    if (action=='add') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    drivers:result
+                }
+                res.render("drivers",resultobj);
+            });
+        });
+        
+    }
+})
+app.get("/admins", (req, res)=>{
+    // res.send("Hello World!");
+    var resultobj;
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`SELECT * FROM admin `, function (err, result, fields) {
+    
+            con.release();
+            console.log(result)
+            resultobj = {
+                admins:result
+            }
+            res.render("admins",resultobj);
+        });
+    });
+    
+})
+app.post("/admins", (req, res)=>{
+    // res.send("Hello World!");
+    let action = req.body.action;
+    if (action=='edit') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    admins:result
+                }
+                res.render("admins",resultobj);
+            });
+        });
+        
+    }
+    if (action=='delete') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    admins:result
+                }
+                res.render("admins",resultobj);
+            });
+        });
+        
+    }
+    if (action=='update') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    admins:result
+                }
+                res.render("admins",resultobj);
+            });
+        });
+        
+    }
+    if (action=='add') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    admins:result
+                }
+                res.render("admins",resultobj);
             });
         });
         
