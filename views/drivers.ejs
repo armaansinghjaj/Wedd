@@ -29,18 +29,25 @@
                         <input type='hidden' name='action' id='action' value='edit'>
                     </form>
                 </td>
+                <td>
+                    <form action='/drivers' method='post'>
+                        <input type='submit' value='delete' name='delete'>
+                        <input type='hidden' name='selected' value='<%=driver.driver_id%>'>
+                        <input type='hidden' name='action' id='action' value='Delete'>
+                    </form>
+                </td>
             </tr>
         <% }) %>
         
     </table>
 
     <div>
-        <h2>Edit Item</h2>
+        <h2>Edit Driver</h2>
         <form action="/drivers" method="post">
             <table>
                 <tr>
                     <td>Driver ID</td>
-                    <td><%= driver_id %></td>
+                    <td><input type="number" name="edit_driver_id" id="edit_driver_id" readonly></td>
                 </tr>
                 <tr>
                     <td>E-mail</td>
@@ -54,13 +61,37 @@
                     <td>Last Name</td>
                     <td><input type="text" name="edit_l_name" id="edit_l_name"></td>
                 </tr>
-
             </table>
+            <input type="submit" value="Edit">
+            <input type="hidden" name="action" value="update">
+            
         </form>
     </div>
 
     <div>
-        
+        <h2>Add driver</h2>
+        <form action="/drivers" method="post">
+            <table>
+                <tr>
+                    <td>E-mail</td>
+                    <td><input type="email" name="new_email" id="new_email"></td>
+                </tr>
+                <tr>
+                    <td>First Name</td>
+                    <td><input type="text" name="new_f_name" id="new_f_name"></td>
+                </tr>
+                <tr>
+                    <td>Last Name</td>
+                    <td><input type="text" name="new_l_name" id="new_l_name"></td>
+                </tr>
+                <tr>
+                    <td>Password</td>
+                    <td><input type="password" name="new_password" id="new_password"></td>
+                </tr>
+            </table>
+            <input type="submit" value="Add">
+            <input type="hidden" name="action" value="add">
+        </form>
     </div>
     
 

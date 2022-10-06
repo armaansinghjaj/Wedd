@@ -2,10 +2,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+var mysql = require('mysql');
 app.set('view engine', 'ejs'); // uncomment when using ejs
 app.use(bodyParser.urlencoded({extended:true}));
-// app.use(express.static("public")); // uncomment when using CSS or images in the project
+app.use(express.static("public")); // uncomment when using CSS or images in the project
 const port = process.env.port || 80;
+
+var pool = mysql.createPool({
+    connectionLimit:100,
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "password",
+    database: "wedddb"
+});
 
 // Handling routes
 // description: use the anyRoute.js file from routes folder to handle endpoints that startes with /anyRoute
@@ -44,13 +54,88 @@ app.get("/admin", (req, res)=>{
 })
 app.get("/drivers", (req, res)=>{
     // res.send("Hello World!");
-    res.render("drivers");
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`SELECT * FROM driver `, function (err, result, fields) {
+    
+            con.release();
+            console.log(result)
+            var resultobj = {
+                drivers:result
+            }
+            res.render("drivers",resultobj);
+        });
+    });
+    
 })
 app.post("/drivers", (req, res)=>{
     // res.send("Hello World!");
     let action = req.body.action;
-    
-    res.render("drivers");
+    if (action==edit) {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver`, function (err, result, fields) {
+        
+                con.release();
+                var resultobj = {
+                    drivers:result
+                }
+                con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+                    con.release()
+                    var resobj = {
+                        req.body.edit_driver_id
+                    }
+                    
+                res.render("drivers",resultobj,resobj);
+            });
+        });
+        
+    }
+    if (action==delete) {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    drivers:result
+                }
+                res.render("drivers",resultobj);
+            });
+        });
+        
+    }
+    if (action==update) {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    drivers:result
+                }
+                res.render("drivers",resultobj);
+            });
+        });
+        
+    }
+    if (action==add) {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                console.log(result)
+                resultobj = {
+                    drivers:result
+                }
+                res.render("drivers",resultobj);
+            });
+        });
+        
+    }
 })
 
 // using shorthand to access '/contact' both for get and post request
