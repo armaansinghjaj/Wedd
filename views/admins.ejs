@@ -9,7 +9,7 @@
 <body>
     <table>
         <tr>
-            <th>Admin ID</th>
+            <th>admin ID</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>E-mail</th>
@@ -47,19 +47,19 @@
             <table>
                 <tr>
                     <td>admin ID</td>
-                    <td><input type="number" name="edit_admin_id" id="edit_admin_id" readonly></td>
+                    <td><input type="number" name="edit_admin_id" readonly value="<%= edit_admin_id%>"></td>
                 </tr>
                 <tr>
                     <td>E-mail</td>
-                    <td><input type="email" name="edit_email" id="edit_email"></td>
+                    <td><input type="email" name="edit_email" value="<%= edit_email %>"></td>
                 </tr>
                 <tr>
                     <td>First Name</td>
-                    <td><input type="text" name="edit_f_name" id="edit_f_name"></td>
+                    <td><input type="text" name="edit_f_name" value="<%= edit_f_name %>"></td>
                 </tr>
                 <tr>
                     <td>Last Name</td>
-                    <td><input type="text" name="edit_l_name" id="edit_l_name"></td>
+                    <td><input type="text" name="edit_l_name" value="<%= edit_l_name %>"></td>
                 </tr>
             </table>
             <input type="submit" value="Edit">
@@ -74,19 +74,19 @@
             <table>
                 <tr>
                     <td>E-mail</td>
-                    <td><input type="email" name="new_email" id="new_email"></td>
+                    <td><input type="email" name="new_email" ></td>
                 </tr>
                 <tr>
                     <td>First Name</td>
-                    <td><input type="text" name="new_f_name" id="new_f_name"></td>
+                    <td><input type="text" name="new_f_name" ></td>
                 </tr>
                 <tr>
                     <td>Last Name</td>
-                    <td><input type="text" name="new_l_name" id="new_l_name"></td>
+                    <td><input type="text" name="new_l_name" ></td>
                 </tr>
                 <tr>
                     <td>Password</td>
-                    <td><input type="password" name="new_password" id="new_password"></td>
+                    <td><input type="password" name="new_password" ></td>
                 </tr>
             </table>
             <input type="submit" value="Add">

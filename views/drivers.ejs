@@ -26,14 +26,14 @@
                     <form action='/drivers' method='post'>
                         <input type='submit' value='edit' name='edit'>
                         <input type='hidden' name='selected' value='<%=driver.driver_id%>'>
-                        <input type='hidden' name='action' id='action' value='edit'>
+                        <input type='hidden' name='action' value='edit'>
                     </form>
                 </td>
                 <td>
                     <form action='/drivers' method='post'>
                         <input type='submit' value='delete' name='delete'>
                         <input type='hidden' name='selected' value='<%=driver.driver_id%>'>
-                        <input type='hidden' name='action' id='action' value='Delete'>
+                        <input type='hidden' name='action'value='delete'>
                     </form>
                 </td>
             </tr>
@@ -47,19 +47,19 @@
             <table>
                 <tr>
                     <td>Driver ID</td>
-                    <td><input type="number" name="edit_driver_id" id="edit_driver_id" readonly></td>
+                    <td><input type="number" name="edit_driver_id" readonly value="<%=edit_driver_id%>"></td>
                 </tr>
                 <tr>
                     <td>E-mail</td>
-                    <td><input type="email" name="edit_email" id="edit_email"></td>
+                    <td><input type="email" name="edit_email" value="<%=edit_email%>"></td>
                 </tr>
                 <tr>
                     <td>First Name</td>
-                    <td><input type="text" name="edit_f_name" id="edit_f_name"></td>
+                    <td><input type="text" name="edit_f_name" value="<%=edit_f_name%>"></td>
                 </tr>
                 <tr>
                     <td>Last Name</td>
-                    <td><input type="text" name="edit_l_name" id="edit_l_name"></td>
+                    <td><input type="text" name="edit_l_name" value="<%=edit_l_name%>"></td>
                 </tr>
             </table>
             <input type="submit" value="Edit">
@@ -74,27 +74,24 @@
             <table>
                 <tr>
                     <td>E-mail</td>
-                    <td><input type="email" name="new_email" id="new_email"></td>
+                    <td><input type="email" name="new_email" ></td>
                 </tr>
                 <tr>
                     <td>First Name</td>
-                    <td><input type="text" name="new_f_name" id="new_f_name"></td>
+                    <td><input type="text" name="new_f_name" ></td>
                 </tr>
                 <tr>
                     <td>Last Name</td>
-                    <td><input type="text" name="new_l_name" id="new_l_name"></td>
+                    <td><input type="text" name="new_l_name" ></td>
                 </tr>
                 <tr>
                     <td>Password</td>
-                    <td><input type="password" name="new_password" id="new_password"></td>
+                    <td><input type="password" name="new_password" ></td>
                 </tr>
             </table>
             <input type="submit" value="Add">
             <input type="hidden" name="action" value="add">
         </form>
     </div>
-    
-
-
 </body>
 </html>
