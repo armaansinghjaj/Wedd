@@ -3,10 +3,21 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 var mysql = require('mysql');
+const session = require('express-session')
 app.set('view engine', 'ejs'); // uncomment when using ejs
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public")); // uncomment when using CSS or images in the project
 const port = process.env.port || 80;
+
+
+var sess = {
+    drivers:[],
+    edit_driver_id:null,
+    edit_admin_id:null,
+    edit_f_name:null,
+    edit_l_name:null,
+    edit_email:null
+};
 
 var pool = mysql.createPool({
     connectionLimit:100,
@@ -54,17 +65,18 @@ app.get("/admin", (req, res)=>{
 })
 app.get("/drivers", (req, res)=>{
     // res.send("Hello World!");
-    var resultobj;
+
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM driver `, function (err, result, fields) {
     
             con.release();
-            console.log(result)
-            resultobj = {
-                drivers:result
-            }
-            res.render("drivers",resultobj);
+            sess.drivers=result;
+            sess.edit_driver_id = null;
+            sess.edit_email = null;
+            sess.edit_f_name = null;
+            sess.edit_l_name = null;
+            res.render("drivers",sess);
         });
     });
     
@@ -72,80 +84,87 @@ app.get("/drivers", (req, res)=>{
 app.post("/drivers", (req, res)=>{
     // res.send("Hello World!");
     let action = req.body.action;
-    if (action=='edit') {
+    if (action==='edit') {
         pool.getConnection((err, con)=>{
             if (err) throw err;
             con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
-        
                 con.release();
-                console.log(result)
-                resultobj = {
-                    drivers:result
-                }
-                res.render("drivers",resultobj);
+                sess.edit_driver_id = result[0].driver_id;
+                sess.edit_email = result[0].email;
+                sess.edit_f_name = result[0].first_name;
+                sess.edit_l_name = result[0].last_name;
+
+                res.render("drivers",sess);
+                return;
+                
             });
         });
+    }
+    if (action==='delete') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`DELETE FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                res.redirect('/drivers');
+                return;
+            });
+        });
+        
         
     }
-    if (action=='delete') {
-        pool.getConnection((err, con)=>{
-            if (err) throw err;
-            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+    if (action==='update') {
+        if (req.body.edit_f_name===""||req.body.edit_l_name===""||req.body.edit_email==="")
+        {
+            res.send('error');
+        }
+        else
+        {
+
         
-                con.release();
-                console.log(result)
-                resultobj = {
-                    drivers:result
-                }
-                res.render("drivers",resultobj);
+            pool.getConnection((err, con)=>{
+                if (err) throw err;
+                con.query(`UPDATE driver set first_name = '${req.body.edit_f_name}', last_name = '${req.body.edit_l_name}', email = '${req.body.edit_email}' WHERE driver_id = '${req.body.edit_driver_id}' `, function (err, result, fields) {
+            
+                    con.release();
+                    res.redirect('/drivers');
+                    return;
+                });
             });
-        });
-        
+        }
     }
-    if (action=='update') {
-        pool.getConnection((err, con)=>{
-            if (err) throw err;
-            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
-        
-                con.release();
-                console.log(result)
-                resultobj = {
-                    drivers:result
-                }
-                res.render("drivers",resultobj);
+    if (action==='add') {
+        if (req.body.new_f_name===""||req.body.new_l_name===""||req.body.new_email===""||req.body.new_password==="")
+        {
+            res.send('error');
+        }
+        else
+        {
+            pool.getConnection((err, con)=>{
+                if (err) throw err;
+                con.query(`INSERT INTO driver (driver_id, email , first_name,last_name,password) VALUES (0,'${req.body.new_email}','${req.body.new_f_name}','${req.body.new_l_name}','${req.body.new_password}')`, function (err, result, fields) {
+            
+                    con.release();
+                    res.redirect("/drivers");
+                });
             });
-        });
-        
-    }
-    if (action=='add') {
-        pool.getConnection((err, con)=>{
-            if (err) throw err;
-            con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
-        
-                con.release();
-                console.log(result)
-                resultobj = {
-                    drivers:result
-                }
-                res.render("drivers",resultobj);
-            });
-        });
-        
+        }
     }
 })
 app.get("/admins", (req, res)=>{
     // res.send("Hello World!");
-    var resultobj;
+
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM admin `, function (err, result, fields) {
     
             con.release();
-            console.log(result)
-            resultobj = {
-                admins:result
-            }
-            res.render("admins",resultobj);
+            sess.admins=result;
+            sess.edit_admin_id = null;
+            sess.edit_email = null;
+            sess.edit_f_name = null;
+            sess.edit_l_name = null;
+            res.render("admins",sess);
         });
     });
     
@@ -153,65 +172,69 @@ app.get("/admins", (req, res)=>{
 app.post("/admins", (req, res)=>{
     // res.send("Hello World!");
     let action = req.body.action;
-    if (action=='edit') {
+    if (action==='edit') {
         pool.getConnection((err, con)=>{
             if (err) throw err;
             con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
-        
                 con.release();
-                console.log(result)
-                resultobj = {
-                    admins:result
-                }
-                res.render("admins",resultobj);
+                sess.edit_admin_id = result[0].admin_id;
+                sess.edit_email = result[0].email;
+                sess.edit_f_name = result[0].first_name;
+                sess.edit_l_name = result[0].last_name;
+
+                res.render("admins",sess);
+                return;
+                
             });
         });
+    }
+    if (action==='delete') {
+        pool.getConnection((err, con)=>{
+            if (err) throw err;
+            con.query(`DELETE FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+        
+                con.release();
+                res.redirect('/admins');
+                return;
+            });
+        });
+        
         
     }
-    if (action=='delete') {
-        pool.getConnection((err, con)=>{
-            if (err) throw err;
-            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
-        
-                con.release();
-                console.log(result)
-                resultobj = {
-                    admins:result
-                }
-                res.render("admins",resultobj);
+    if (action==='update') {
+        if (req.body.edit_f_name===""||req.body.edit_l_name===""||req.body.edit_email==="")
+        {
+            res.send('error');
+        }
+        else
+        {
+            pool.getConnection((err, con)=>{
+                if (err) throw err;
+                con.query(`UPDATE admin set first_name = '${req.body.edit_f_name}', last_name = '${req.body.edit_l_name}', email = '${req.body.edit_email}' WHERE admin_id = '${req.body.edit_admin_id}' `, function (err, result, fields) {
+            
+                    con.release();
+                    res.redirect('/admins');
+                    return;
+                });
             });
-        });
-        
+        }
     }
-    if (action=='update') {
-        pool.getConnection((err, con)=>{
-            if (err) throw err;
-            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
-        
-                con.release();
-                console.log(result)
-                resultobj = {
-                    admins:result
-                }
-                res.render("admins",resultobj);
+    if (action==='add') {
+        if (req.body.new_f_name===""||req.body.new_l_name===""||req.body.new_email===""||req.body.new_password==="")
+        {
+            res.send('error');
+        }
+        else
+        {
+            pool.getConnection((err, con)=>{
+                if (err) throw err;
+                con.query(`INSERT INTO admin (admin_id, email , first_name,last_name,password) VALUES (0,'${req.body.new_email}','${req.body.new_f_name}','${req.body.new_l_name}','${req.body.new_password}')`, function (err, result, fields) {
+            
+                    con.release();
+                    res.redirect("/admins");
+                });
             });
-        });
-        
-    }
-    if (action=='add') {
-        pool.getConnection((err, con)=>{
-            if (err) throw err;
-            con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
-        
-                con.release();
-                console.log(result)
-                resultobj = {
-                    admins:result
-                }
-                res.render("admins",resultobj);
-            });
-        });
-        
+        }
     }
 })
 
