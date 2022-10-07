@@ -39,26 +39,35 @@ app.get("/", (req, res)=>{
     // res.send("Hello World!");
     res.render("home", {year: new Date().getFullYear(), title: "Homepage"});
 })
+
 app.get("/ride", (req, res)=>{
     // res.send("Hello World!");
     res.render("ride", {year: new Date().getFullYear(), title: "Ride"});
 })
+
 app.get("/about", (req, res)=>{
     // res.send("Hello World!");
     res.render("about", {year: new Date().getFullYear(), title: "About us"});
 })
+
 app.get("/contact", (req, res)=>{
     // res.send("Hello World!");
     res.render("contact", {year: new Date().getFullYear(), title: "Contact us"});
 })
+
 app.get("/news", (req, res)=>{
     // res.send("Hello World!");
     res.render("news", {year: new Date().getFullYear(), title: "News"});
 })
+
 app.get("/login", (req, res)=>{
     // res.send("Hello World!");
     res.render("login", {year: new Date().getFullYear(), title: "Login"});
 })
+app.post("/login", (req, res)=>{
+    
+})
+
 app.get("/admin", (req, res)=>{
     // res.send("Hello World!");
     res.render("admin");
