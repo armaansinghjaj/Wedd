@@ -152,6 +152,58 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`background` (
   `news_page` VARCHAR(255)
 );
 
+-- -----------------------------------------------------
+-- Table `wedddb`.`services`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wedddb`.`services` (
+  `service_id` TINYINT(2) NOT NULL,
+  `service_name` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`service_id`)
+);
+
+-- -----------------------------------------------------
+-- Table `wedddb`.`requests`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wedddb`.`requests` (
+  `request_id` INT(10) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `address` VARCHAR(500) NOT NULL,
+  `phone` VARCHAR(255) NOT NULL,
+  `service_id` TINYINT(2) NOT NULL,
+  `email` VARCHAR(50) NOT NULL,
+  `comments` VARCHAR(1000),
+  `updates` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`request_id`),
+  INDEX `fk_service_idx` (`service_id` ASC),
+  CONSTRAINT `fk_service_id`
+    FOREIGN KEY (`service_id`)
+    REFERENCES `wedddb`.`services` (`service_id`),
+  CONSTRAINT CHK_service_id CHECK (service_id >= 1 AND service_id <= 4),
+  CONSTRAINT CHK_updates CHECK (updates IN ('0', '1'))
+);
+
+-- -----------------------------------------------------
+-- Table `wedddb`.`requests`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wedddb`.`rideRequests` (
+  `request_id` INT(10) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(50) NOT NULL,
+  `phone` VARCHAR(255) NOT NULL,
+  `pickup_address` VARCHAR(500) NOT NULL,
+  `destination` VARCHAR(500) NOT NULL,
+  PRIMARY KEY (`request_id`)
+);
+
+insert into services (service_id, service_name)
+values(1,"shuttle");
+insert into services (service_id, service_name)
+values(2,"chauffeur");
+insert into services (service_id, service_name)
+values(3,"drive");
+insert into services (service_id, service_name)
+values(4,"own");
+
 insert into driver (driver_id, email , first_name,last_name,password)
 values(null,'armaan@gmail.com','armaan','singh','munni');
 insert into driver (driver_id, email , first_name,last_name,password)

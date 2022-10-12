@@ -36,7 +36,7 @@ var sess = {
 var pool = mysql.createPool({
     connectionLimit:100,
     host: "localhost",
-    port: 3307,
+    port: 3306,
     user: "root",
     password: "password",
     database: "wedddb"
@@ -66,6 +66,29 @@ app.get("/ride", (req, res)=>{
     res.render("ride", {year: new Date().getFullYear(), title: "Ride"});
 })
 
+app.post("/ride", (req, res)=>{
+    let name = req.body.name;
+    let email = req.body.email;
+    let phone = req.body.phone;
+    let pick = req.body.pick;
+    let destination = req.body.destination;
+
+    if (name===""||email===""||phone===""||pick===""||destination===""){
+        res.send('error');
+    }
+
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`INSERT INTO rideRequests (request_id,name,email,phone,pickup_address,destination) VALUES (0,'${name}','${email}','${phone}','${pick}','${destination}') `, function (err, result, fields) {
+    
+            con.release();
+            
+        });
+    });
+
+    res.redirect('/ride')
+})
+
 app.get("/about", (req, res)=>{
     // res.send("Hello World!");
     pool.getConnection((err, con)=>{
@@ -90,6 +113,31 @@ app.get("/contact", (req, res)=>{
             res.render("contact", {year: new Date().getFullYear(), title: "Contact us", contact_image: result[0].contact_page});
         });
     });
+})
+
+app.post("/contact", (req, res)=>{
+    let name = req.body.name;
+    let address = req.body.address;
+    let phone = req.body.phone;
+    let service_id = req.body.services;
+    let email = req.body.email;
+    let comments = req.body.comments;
+    let updates = (req.body.consent==1)?req.body.consent:0;
+
+    if (name===""||address===""||phone===""||service_id===""||email===""||comments===""||updates===""){
+        res.send('error');
+    }
+
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`INSERT INTO requests (request_id,name,address,phone,service_id,email,comments,updates) VALUES (0,'${name}','${address}','${phone}','${service_id}','${email}','${comments}','${updates}') `, function (err, result, fields) {
+    
+            con.release();
+            
+        });
+    });
+
+    res.redirect("/contact");
 })
 
 app.get("/news", (req, res)=>{
