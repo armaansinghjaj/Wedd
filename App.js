@@ -75,6 +75,7 @@ app.post("/ride", (req, res)=>{
 
     if (name===""||email===""||phone===""||pick===""||destination===""){
         res.send('error');
+        return;
     }
 
     pool.getConnection((err, con)=>{
@@ -126,6 +127,7 @@ app.post("/contact", (req, res)=>{
 
     if (name===""||address===""||phone===""||service_id===""||email===""||comments===""||updates===""){
         res.send('error');
+        return;
     }
 
     pool.getConnection((err, con)=>{
@@ -342,6 +344,27 @@ app.post("/admins", (req, res)=>{
             });
         }
     }
+})
+
+app.get("/rides",(req,res)=>{
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`SELECT * FROM rideRequests`, function (err, result, fields) {
+            con.release();
+            res.render("ride_requests",{rides:result});
+        });
+    });
+})
+
+app.get("/requests",(req,res)=>{
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`SELECT * FROM requests`, function (err, result, fields) {
+            con.release();
+            res.render("contact_requests",{requests:result});
+        });
+    });
+    
 })
 
 // to change the images

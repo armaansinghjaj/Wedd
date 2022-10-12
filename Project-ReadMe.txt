@@ -33,7 +33,7 @@ COMMANDS:
 9. Adding current git repo to remote repo:
     git remote add origin https://github.com/armaansinghjaj/Wedd.git
 10. Changing branch to main branch
-    git branch -M main
+    git branch -M <branchname>
 11. Pushing to remote branch with changes
     git push -u origin main     #after changes
 12. Pulling Changes from remote repo
