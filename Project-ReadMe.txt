@@ -35,6 +35,6 @@ COMMANDS:
 10. Changing branch to main branch
     git branch -M <branchname>
 11. Pushing to remote branch with changes
-    git push -u origin main     #after changes
+    git push -u origin <branchname>     #after changes
 12. Pulling Changes from remote repo
     git pull origin <branchname>

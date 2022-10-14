@@ -165,7 +165,7 @@ app.post("/login", (req, res)=>{
 
 app.get("/admin", (req, res)=>{
     // res.send("Hello World!");
-    res.render("admin");
+    res.render("admin_home");
 })
 app.get("/drivers", (req, res)=>{
     // res.send("Hello World!");
