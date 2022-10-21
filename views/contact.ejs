@@ -1,7 +1,7 @@
 <%- include("header") -%>
 
 <h1>Need other services?</h1>
-<form>
+<form method="post" action="/contact">
     <label>Name:</label>
     <input type="text" name="name"><br>
     <label>Address:</label>
@@ -11,19 +11,19 @@
     <label>What services are you looking for?</label>
     <table>
         <tr>
-            <td><input type="radio" name="services" value="shuttle"></td>
+            <td><input type="radio" name="services" value="1"></td>
             <td>Ride: Shuttle (Our car)</td>
         </tr>
         <tr>
-            <td><input type="radio" name="services" value="chauffeur"></td>
+            <td><input type="radio" name="services" value="2"></td>
             <td>Ride: Chauffeur (Your car)</td>
         </tr>
         <tr>
-            <td><input type="radio" name="services" value="drive"></td>
+            <td><input type="radio" name="services" value="3"></td>
             <td>Drive: Apply to be a driver</td>
         </tr>
         <tr>
-            <td><input type="radio" name="services" value="own"></td>
+            <td><input type="radio" name="services" value="4"></td>
             <td>Own: Request to open a franchise</td>
         </tr>
     </table>
@@ -32,7 +32,7 @@
     <input type="email" name="email"><br>
     <label>Comments:</label>
     <input type="text" name="comments"><br>
-    <input type="checkbox" name="consent"> I consent to receive 'We DD' updates and newsletters via email.<br>
+    <input type="checkbox" name="consent" value="1"> I consent to receive 'We DD' updates and newsletters via email.<br>
     <input type="submit">
 </form>
 

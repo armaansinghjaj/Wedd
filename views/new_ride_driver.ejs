@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Request ID</th>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Phone</th>
+            <th>Pick-up Address</th>
+            <th>Destination</th>
+            <th>Accept</th>
+            <th>Decline</th>
+        </tr>
+        <% rides.forEach(ride => { %>
+            <tr>
+                <td><%=ride.request_id%></td>
+                <td><%=ride.name%></td>
+                <td><%=ride.email%></td>
+                <td><%=ride.phone%></td>
+                <td><%=ride.pickup_address%></td>
+                <td><%=ride.destination%></td>
+                <td>
+                    <form action='/rides' method='post'>
+                        <input type='submit' value='accept' name='accept'>
+                        <input type='hidden' name='selected' value='<%=ride.request_id%>'>
+                        <input type='hidden' name='action' value='accept'>
+                    </form>
+                </td>
+                <td>
+                    <form action='/rides' method='post'>
+                        <input type='submit' value='decline' name='decline'>
+                        <input type='hidden' name='selected' value='<%=ride.request_id%>'>
+                        <input type='hidden' name='action'value='decline'>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+        
+    </table>
+</body>
+</html>
+</body>
+</html>

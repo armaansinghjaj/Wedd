@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Request ID</th>e
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone</th>
+            <th>Service</th>
+            <th>E-mail</th>
+            <th>Comments</th>
+            <th>Updates</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        <% requests.forEach(request => { %>
+            <tr>
+                <td><%=request.request_id%></td>
+                <td><%=request.name%></td>
+                <td><%=request.address%></td>
+                <td><%=request.phone%></td>
+                <td><%=request.service_id%></td>
+                <td><%=request.email%></td>
+                <td><%=request.comments%></td>
+                <td><%=request.updates%></td>
+                <td>
+                    <form action='/requests' method='post'>
+                        <input type='submit' value='edit' name='edit'>
+                        <input type='hidden' name='selected' value='<%=request.request_id%>'>
+                        <input type='hidden' name='action' value='edit'>
+                    </form>
+                </td>
+                <td>
+                    <form action='/requests' method='post'>
+                        <input type='submit' value='delete' name='delete'>
+                        <input type='hidden' name='selected' value='<%=request.request_id%>'>
+                        <input type='hidden' name='action'value='delete'>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+        
+    </table>
+</body>
+</html>
