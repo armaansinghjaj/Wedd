@@ -17,21 +17,32 @@ const storage = multer.diskStorage({
 })
 // const upload = multer({dest: __dirname + '/public/image'});
 const upload = multer({storage: storage});
-const session = require('express-session')
+const session = require('express-session');
+const passport = require('passport');
 app.set('view engine', 'ejs'); // uncomment when using ejs
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public")); // uncomment when using CSS or images in the project
 const port = process.env.port || 80;
 
+app.use(session({
+    secret: "This is secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {secure:true}
+}));
 
-var sess = {
-    drivers:[],
-    edit_driver_id:null,
-    edit_admin_id:null,
-    edit_f_name:null,
-    edit_l_name:null,
-    edit_email:null
-};
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+// var sess = {
+//     drivers:[],
+//     edit_driver_id:null,
+//     edit_admin_id:null,
+//     edit_f_name:null,
+//     edit_l_name:null,
+//     edit_email:null
+// };
 
 var pool = mysql.createPool({
     connectionLimit:100,
