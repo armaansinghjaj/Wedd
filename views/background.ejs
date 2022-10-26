@@ -7,55 +7,9 @@
     <title>Document</title>
 </head>
 <body>
-    
-        <table>
-                <% images.forEach(image => { %>
-                    <tr>
-                        <th>Home page</th>
-                        <td><%= image.home_page %></td>
-                        <td>
-                            <form action="/background" method="POST" enctype="multipart/form-data">
-                                <input type="file" accept="image/x-png,image/gif,image/jpeg,image/jpg" value="Edit" name="image">
-                                <input type="hidden" name="action" value="for_home">
-                                <input type="submit" value="Add">
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>About page</th>
-                        <td><%= image.about_page %></td>
-                        <td>
-                            <form action="/background" method="POST" enctype="multipart/form-data">
-                                <input type="file" accept="image/x-png,image/gif,image/jpeg,image/jpg" value="Edit" name="image">
-                                <input type="hidden" name="action" value="for_about">
-                                <input type="submit" value="Add">
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Contact page</th>
-                        <td><%= image.contact_page %></td>
-                        <td>
-                            <form action="/background" method="POST" enctype="multipart/form-data">
-                                <input type="file" accept="image/x-png,image/gif,image/jpeg,image/jpg" value="Edit" name="image">
-                                <input type="hidden" name="action" value="for_contact">
-                                <input type="submit" value="Add">
-                            </form>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>News page</th>
-                        <td><%= image.news_page %></td>
-                        <td>
-                            <form action="/background" method="POST" enctype="multipart/form-data">
-                                <input type="file" accept="image/x-png,image/gif,image/jpeg,image/jpg" value="Edit" name="image">
-                                <input type="hidden" name="action" value="for_news">
-                                <input type="submit" value="Add">
-                            </form>
-                        </td>
-                    </tr>
-                <% }) %>
-        </table>
-
+    <p><a href="/background?option=home">Home</a></p>
+    <p><a href="/background?option=about">About</a></p>
+    <p><a href="/background?option=contact">Contact</a></p>
+    <p><a href="/background?option=news">News</a></p>
 </body>
 </html>

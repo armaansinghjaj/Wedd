@@ -4,46 +4,55 @@ const bodyParser = require("body-parser");
 const app = express();
 var mysql = require('mysql');
 var fs = require('fs');
+var path = require('path');
 const multer = require('multer');
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) =>{
-        cb(null, __dirname+"/public/image")
+        cb(null, __dirname+"\\public\\image")
     },
     filename: (req, file, cb) =>{
-        // console.log(file.originalname.substring(file.originalname.lastIndexOf("."), file.originalname.length))
-        let originalname = file.originalname;
-        cb(null, "homepage" + originalname.substring(originalname.lastIndexOf("."), originalname.length))
+        let suffix = path.extname(file.originalname);
+
+        let new_name = ""
+        if(req.query.page === "home")
+            new_name = "homepage" + suffix;
+        else if(req.query.page === "about")
+            new_name = "aboutpage" + suffix;
+        else if(req.query.page === "contact")
+            new_name = "contactpage" + suffix;
+        else if(req.query.page === "news")
+            new_name = "newspage" + suffix;
+        
+        cb(null, new_name);
     }
 })
-// const upload = multer({dest: __dirname + '/public/image'});
 const upload = multer({storage: storage});
-const session = require('express-session');
-const passport = require('passport');
-app.set('view engine', 'ejs'); // uncomment when using ejs
-app.use(bodyParser.urlencoded({extended:true}));
-app.use(express.static("public")); // uncomment when using CSS or images in the project
-const port = process.env.port || 80;
 
-app.use(session({
-    secret: "This is secret",
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const session = require('express-session')
+
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(express.static("public"));
+const port = process.env.port || 3360;
+
+const oneDay = 1000 * 60 * 60 * 24;
+let sess = {
+    secret: "Thisisasecret",
     resave: false,
     saveUninitialized: true,
-    cookie: {secure:true}
-}));
+    cookie: {secure:false, maxAge:oneDay}
+};
 
+// Set up middleware
+app.use(session(sess));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 
-
-// var sess = {
-//     drivers:[],
-//     edit_driver_id:null,
-//     edit_admin_id:null,
-//     edit_f_name:null,
-//     edit_l_name:null,
-//     edit_email:null
-// };
-
+// create database connection
 var pool = mysql.createPool({
     connectionLimit:100,
     host: "localhost",
@@ -53,27 +62,37 @@ var pool = mysql.createPool({
     database: "wedddb"
 });
 
-// Handling routes
-// description: use the anyRoute.js file from routes folder to handle endpoints that startes with /anyRoute
+function loadDefaultValues(req){
+    req.session.drivers=[];
+    req.session.edit_driver_id=null;
+    req.session.edit_admin_id=null;
+    req.session.edit_f_name=null;
+    req.session.edit_l_name=null;
+    req.session.edit_email=null;
+    req.session.name="Armaan";
+}
 
-// const anyRoute = require(__dirname+"/routes/anyROute");
-// app.use("/anyRouter", anyRoute)
+// --------------------------------- routes ---------------------------------------
 
-// route methods
+// default route
 app.get("/", (req, res)=>{
+
+    loadDefaultValues(req);
+    
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM background`, function (err, result, fields) {
-    
+            
             con.release();
-            // console.log(result[0].home_page)
             res.render("home", {year: new Date().getFullYear(), title: "Homepage", image: result[0].home_page});
         });
     });
 })
 
 app.get("/ride", (req, res)=>{
-    // res.send("Hello World!");
+
+    loadDefaultValues(req);
+
     res.render("ride", {year: new Date().getFullYear(), title: "Ride"});
 })
 
@@ -102,26 +121,22 @@ app.post("/ride", (req, res)=>{
 })
 
 app.get("/about", (req, res)=>{
-    // res.send("Hello World!");
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM background`, function (err, result, fields) {
     
             con.release();
-            // console.log(result[0].home_page)
             res.render("about", {year: new Date().getFullYear(), title: "About us", about_image: result[0].about_page});
         });
     });
 })
 
 app.get("/contact", (req, res)=>{
-    // res.send("Hello World!");
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM background`, function (err, result, fields) {
     
             con.release();
-            // console.log(result[0].home_page)
             res.render("contact", {year: new Date().getFullYear(), title: "Contact us", contact_image: result[0].contact_page});
         });
     });
@@ -154,20 +169,20 @@ app.post("/contact", (req, res)=>{
 })
 
 app.get("/news", (req, res)=>{
-    // res.send("Hello World!");
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM background`, function (err, result, fields) {
     
             con.release();
-            // console.log(result[0].home_page)
             res.render("news", {year: new Date().getFullYear(), title: "News", news_image: result[0].news_page});
         });
     });
 })
 
 app.get("/login", (req, res)=>{
-    // res.send("Hello World!");
+
+    loadDefaultValues(req);
+
     res.render("login", {year: new Date().getFullYear(), title: "Login"});
 })
 app.post("/login", (req, res)=>{
@@ -175,46 +190,43 @@ app.post("/login", (req, res)=>{
 })
 
 app.get("/admin", (req, res)=>{
-    // res.send("Hello World!");
+
+    loadDefaultValues(req);
+
     res.render("admin_home");
 })
+
 app.get("/drivers", (req, res)=>{
-    // res.send("Hello World!");
+
+    loadDefaultValues(req);
+    let sess = req.session;
 
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM driver `, function (err, result, fields) {
     
             con.release();
-            //console.log(result)
-            resultobj = {
-                drivers:result
-            }
-            res.render("drivers",resultobj);
+            
             sess.drivers=result;
-            sess.edit_driver_id = null;
-            sess.edit_email = null;
-            sess.edit_f_name = null;
-            sess.edit_l_name = null;
             res.render("drivers",sess);
         });
     });
     
 })
 app.post("/drivers", (req, res)=>{
-    // res.send("Hello World!");
+
+    let sess = req.session;
+
     let action = req.body.action;
 
     if (action==='edit') {
+
         pool.getConnection((err, con)=>{
             if (err) throw err;
             con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+                
                 con.release();
-                //console.log(result)
-                resultobj = {
-                    drivers:result
-                }
-                res.render("drivers",resultobj);
+                
                 sess.edit_driver_id = result[0].driver_id;
                 sess.edit_email = result[0].email;
                 sess.edit_f_name = result[0].first_name;
@@ -222,7 +234,6 @@ app.post("/drivers", (req, res)=>{
 
                 res.render("drivers",sess);
                 return;
-                
             });
         });
     }
@@ -269,42 +280,43 @@ app.post("/drivers", (req, res)=>{
         }
     }
 })
+
 app.get("/admins", (req, res)=>{
-    // res.send("Hello World!");
+
+    loadDefaultValues(req);
+    let sess = req.session;
 
     pool.getConnection((err, con)=>{
         if (err) throw err;
         con.query(`SELECT * FROM admin `, function (err, result, fields) {
     
             con.release();
-            //console.log(result)
-            resultobj = {
-                admins:result
-            }
-            res.render("admins",resultobj);
+
             sess.admins=result;
             sess.edit_admin_id = null;
             sess.edit_email = null;
             sess.edit_f_name = null;
             sess.edit_l_name = null;
+
             res.render("admins",sess);
         });
     });
     
 })
 app.post("/admins", (req, res)=>{
-    // res.send("Hello World!");
+
+    let sess = req.session;
     let action = req.body.action;
+    
     if (action==='edit') {
+
         pool.getConnection((err, con)=>{
+
             if (err) throw err;
             con.query(`SELECT * FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
+
                 con.release();
-                //console.log(result)
-                resultobj = {
-                    admins:result
-                }
-                res.render("admins",resultobj);
+                
                 sess.edit_admin_id = result[0].admin_id;
                 sess.edit_email = result[0].email;
                 sess.edit_f_name = result[0].first_name;
@@ -317,13 +329,17 @@ app.post("/admins", (req, res)=>{
         });
     }
     if (action==='delete') {
+
         pool.getConnection((err, con)=>{
+            
             if (err) throw err;
+            
             con.query(`DELETE FROM admin WHERE admin_id = '${req.body.selected}' `, function (err, result, fields) {
                 con.release();
                 res.redirect('/admins');
                 return;
             });
+
         });
     }
     if (action==='update') {
@@ -334,7 +350,9 @@ app.post("/admins", (req, res)=>{
             pool.getConnection((err, con)=>{
                 if (err) throw err;
                 con.query(`UPDATE admin set first_name = '${req.body.edit_f_name}', last_name = '${req.body.edit_l_name}', email = '${req.body.edit_email}' WHERE admin_id = '${req.body.edit_admin_id}' `, function (err, result, fields) {
+                    
                     con.release();
+                    
                     res.redirect('/admins');
                     return;
                 });
@@ -347,8 +365,10 @@ app.post("/admins", (req, res)=>{
         }
         else{
             pool.getConnection((err, con)=>{
+                
                 if (err) throw err;
                 con.query(`INSERT INTO admin (admin_id, email , first_name,last_name,password) VALUES (0,'${req.body.new_email}','${req.body.new_f_name}','${req.body.new_l_name}','${req.body.new_password}')`, function (err, result, fields) {
+                    
                     con.release();
                     res.redirect("/admins");
                 });
@@ -380,24 +400,66 @@ app.get("/requests",(req,res)=>{
 
 // to change the images
 app.get("/background", (req, res)=>{
-    pool.getConnection((err, con)=>{
-        if (err) throw err;
-        con.query(`SELECT * FROM background`, function (err, result, fields) {
-    
-            con.release();
-            // console.log(result)
-            res.render("background", {images:result})
-        });
-    });
+    if(req.query.option){
+        switch (req.query.option) {
+            case "home":{
+                pool.getConnection((err, con)=>{
+                    if (err) throw err;
+                    con.query(`SELECT * FROM background`, function (err, result, fields) {
+                
+                        con.release();
+                        res.render("bg-home", {images:result})
+                    });
+                });
+                break;
+            }
+            case "about":{
+                pool.getConnection((err, con)=>{
+                    if (err) throw err;
+                    con.query(`SELECT * FROM background`, function (err, result, fields) {
+                
+                        con.release();
+                        res.render("bg-about", {images:result})
+                    });
+                });
+                break;
+            }
+            case "contact":{
+                pool.getConnection((err, con)=>{
+                    if (err) throw err;
+                    con.query(`SELECT * FROM background`, function (err, result, fields) {
+                
+                        con.release();
+                        res.render("bg-contact", {images:result})
+                    });
+                });
+                break;
+            }
+            case "news":{
+                pool.getConnection((err, con)=>{
+                    if (err) throw err;
+                    con.query(`SELECT * FROM background`, function (err, result, fields) {
+                
+                        con.release();
+                        res.render("bg-news", {images:result})
+                    });
+                });
+                break;
+            }
+        }
+    }
+    else{
+        res.render("background");
+    }
 })
 app.post("/background", upload.single('image'), (req, res)=>{
-    // console.log(imageName);
-    // console.log(req.body.action);
+
+    let background_placeholder_path =  __dirname+"\\public\\backgroundPlaceholder\\Placeholder.png";
     
+    // for home page
     if(req.body.action && req.body.action === "for_home"){
-        // console.log(req.body.action);
         let originalname = req.file.originalname;
-        let imageName = "image/homepage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
+        let imageName = "image/homepage"+path.extname(originalname);
         
         pool.getConnection((err, con)=>{
             if (err) throw err;
@@ -405,10 +467,25 @@ app.post("/background", upload.single('image'), (req, res)=>{
                 con.release();
                 if(err) throw err;
                 else {
-                    // console.log(result[0].home_page.substring(result[0].home_page.lastIndexOf("/")+1, result[0].home_page.length));
-                    // console.log(result[0].home_page);
                     let full_path = __dirname+"/public/"+result[0].home_page;
+                    
+                    // let files = fs.readdirSync(__dirname+"/public/image");
+                    // console.log(files.includes("homepage"+path.extname(result[0].home_page)));
                     fs.unlinkSync(full_path);
+                    // try {
+                    //     fs.unlinkSync(full_path);
+                    // } catch(fileRemoveError) {
+                        
+                    //     pool.getConnection((err, con)=>{
+                    //         if (err) throw err;
+                    //         con.query(`UPDATE background SET home_page = '${background_placeholder_path}'`, function (err, result, fields) {
+                    //             con.release();
+                                
+                    //             if(err) throw err;
+                    //             else res.redirect("/background");
+                    //         });
+                    //     });
+                    // }
                 }
             });
         });
@@ -422,20 +499,19 @@ app.post("/background", upload.single('image'), (req, res)=>{
             });
         });
     }
-    /*else if(req.body.action && req.body.action === "for_about"){
-        // console.log(req.body.action);
+
+    // for about page
+    else if(req.body.action && req.body.action === "for_about"){
         let originalname = req.file.originalname;
-        let imageName = "image/homepage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
+        let imageName = "image/aboutpage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
         
         pool.getConnection((err, con)=>{
             if (err) throw err;
-            con.query(`SELECT home_page FROM background`, function (err, result, fields) {
+            con.query(`SELECT about_page FROM background`, function (err, result, fields) {
                 con.release();
                 if(err) throw err;
                 else {
-                    // console.log(result[0].home_page.substring(result[0].home_page.lastIndexOf("/")+1, result[0].home_page.length));
-                    // console.log(result[0].home_page);
-                    let full_path = __dirname+"/public/"+result[0].home_page;
+                    let full_path = __dirname+"/public/"+result[0].about_page;
                     fs.unlinkSync(full_path);
                 }
             });
@@ -443,27 +519,25 @@ app.post("/background", upload.single('image'), (req, res)=>{
 
         pool.getConnection((err, con)=>{
             if (err) throw err;
-            con.query(`UPDATE background SET home_page = '${imageName}'`, function (err, result, fields) {
+            con.query(`UPDATE background SET about_page = '${imageName}'`, function (err, result, fields) {
                 con.release();
                 if(err) throw err;
                 else res.redirect("/background");
             });
         });
     }
+    // for contact page
     else if(req.body.action && req.body.action === "for_contact"){
-        // console.log(req.body.action);
         let originalname = req.file.originalname;
-        let imageName = "image/homepage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
+        let imageName = "image/contactpage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
         
         pool.getConnection((err, con)=>{
             if (err) throw err;
-            con.query(`SELECT home_page FROM background`, function (err, result, fields) {
+            con.query(`SELECT contact_page FROM background`, function (err, result, fields) {
                 con.release();
                 if(err) throw err;
                 else {
-                    // console.log(result[0].home_page.substring(result[0].home_page.lastIndexOf("/")+1, result[0].home_page.length));
-                    // console.log(result[0].home_page);
-                    let full_path = __dirname+"/public/"+result[0].home_page;
+                    let full_path = __dirname+"/public/"+result[0].contact_page;
                     fs.unlinkSync(full_path);
                 }
             });
@@ -471,27 +545,26 @@ app.post("/background", upload.single('image'), (req, res)=>{
 
         pool.getConnection((err, con)=>{
             if (err) throw err;
-            con.query(`UPDATE background SET home_page = '${imageName}'`, function (err, result, fields) {
+            con.query(`UPDATE background SET contact_page = '${imageName}'`, function (err, result, fields) {
                 con.release();
                 if(err) throw err;
                 else res.redirect("/background");
             });
         });
     }
+
+    // for news page
     else if(req.body.action && req.body.action === "for_news"){
-        // console.log(req.body.action);
         let originalname = req.file.originalname;
-        let imageName = "image/homepage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
+        let imageName = "image/newspage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
         
         pool.getConnection((err, con)=>{
             if (err) throw err;
-            con.query(`SELECT home_page FROM background`, function (err, result, fields) {
+            con.query(`SELECT news_page FROM background`, function (err, result, fields) {
                 con.release();
                 if(err) throw err;
                 else {
-                    // console.log(result[0].home_page.substring(result[0].home_page.lastIndexOf("/")+1, result[0].home_page.length));
-                    // console.log(result[0].home_page);
-                    let full_path = __dirname+"/public/"+result[0].home_page;
+                    let full_path = __dirname+"/public/"+result[0].news_page;
                     fs.unlinkSync(full_path);
                 }
             });
@@ -499,13 +572,13 @@ app.post("/background", upload.single('image'), (req, res)=>{
 
         pool.getConnection((err, con)=>{
             if (err) throw err;
-            con.query(`UPDATE background SET home_page = '${imageName}'`, function (err, result, fields) {
+            con.query(`UPDATE background SET news_page = '${imageName}'`, function (err, result, fields) {
                 con.release();
                 if(err) throw err;
                 else res.redirect("/background");
             });
         });
-    }*/
+    }
 })
 
 // handling status errors

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bg-news</title>
+</head>
+<body>
+    
+        <table>
+                <% images.forEach(image => { %>
+                    <tr>
+                        <th>News page</th>
+                        <td><%= image.news_page %></td>
+                        <td>
+                            <form action="/background?page=news" method="POST" enctype="multipart/form-data">
+                                <input type="file" accept="image/x-png,image/gif,image/jpeg,image/jpg" value="Edit" name="image">
+                                <input type="hidden" name="action" value="for_news">
+                                <input type="submit" value="Add">
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+        </table>
+
+</body>
+</html>
