@@ -1,0 +1,30 @@
+<%- include("header") -%>
+
+<div class="wrapper">
+    <section class="form login">
+        <header>Signup</header>
+        <form action="#">
+            <div class="error-txt"></div>
+            <div class="field input">
+                <label>Email address</label>
+                <input type="email" name="email" placeholder="Email Address">
+            </div>
+            <div class="field input">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="field input">
+                <label>Retype password</label>
+                <input type="password" name="retype_password" placeholder="Retype password">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="field button">
+                <input type="submit" value="Signup">
+            </div>
+        </form>
+        <div class="link">Already have an account?<a href="index.php">Login now</a></div>
+    </section>
+</div>
+
+<%- include("footer") -%>

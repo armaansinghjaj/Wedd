@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin news</title>
+</head>
+<body>
+    <div>
+        <h2>Add News</h2>
+        <form action="/addnews" method="POST">
+            <table>
+                <tr>
+                    <td>Start-date</td>
+                    <td><input type="datetime-local" name="start_date" ></td>
+                </tr>
+                <tr>
+                    <td>End-date</td>
+                    <td><input type="datetime-local" name="end_date" ></td>
+                </tr>
+                <tr>
+                    <td>Headline</td>
+                    <td><input type="text" name="headline" ></td>
+                </tr>
+                <tr>
+                    <td>Message</td>
+                    <td><input type="text" name="message" ></td>
+                </tr>
+                <tr>
+                    <td>Color</td>
+                    <td><input type="color" name="color" ></td>
+                </tr>
+            </table>
+            <input type="submit" value="Add">
+            <input type="hidden" name="action" value="add">
+        </form>
+    </div>
+</body>
+</html>

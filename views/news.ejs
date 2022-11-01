@@ -1,14 +1,15 @@
 <%- include("header") -%>
 
-<h3>10% discount for new customers</h3>
-<p>WeDD offering a discount of 10% on first 5 rides for new customers.<br>
-    Use code: NEWRIDE22<br>
-    Offer valid for a limited time.</p>
-<h3>Service updates</h3>
-<p>WeDD website will be temporarily down on August 24th, 2022 for 6 hours from 4:00 am till 10:00 am Mountain Standard Time.</p>
-<h3>Price hike</h3>
-<p>Starting January 1st of next year, WeDD will revoke its current fares prices. There will be 5% increase in the fare.</p>
+<% newslist.forEach(news => { %>
+    <div class="news_component" style="border: 1px solid black; border-radius: 5px; display: inline-block;">
+        <h3><%=news.start_date%></h3>
+        <h3><%=news.end_date%></h3>
+        <p><%=news.headline%></p>
+        <p><%=news.message%></p>
+        <p><%=news.color%></p>
+    </div>
+<% }) %>
 
-<img src="<%= news_image %> " style="height: 100px; width: 100px;" alt="">
+<!-- <img src="<%=// news_image %> " style="height: 100px; width: 100px;" alt=""> -->
 
 <%- include("footer") -%>

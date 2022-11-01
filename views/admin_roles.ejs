@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin roles</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Role ID</th>
+            <th>Role Title</th>
+        </tr>
+        <% roles.forEach(role => { %>
+            <tr>
+                <td><%=role.role_id%></td>
+                <td><%=role.role_title%></td>
+                <td>
+                    <form action='/roles' method='post'>
+                        <input type='submit' value='edit' name='edit'>
+                        <input type='hidden' name='selected' value='<%=role.driver_id%>'>
+                        <input type='hidden' name='action' value='edit'>
+                    </form>
+                </td>
+                <td>
+                    <form action='/roles' method='post'>
+                        <input type='submit' value='delete' name='delete'>
+                        <input type='hidden' name='selected' value='<%=role.driver_id%>'>
+                        <input type='hidden' name='action'value='delete'>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+        
+    </table>
+
+    <div>
+        <h2>Edit Roles</h2>
+        <form action="/roles" method="post">
+            <table>
+                <tr>
+                    <td>Role ID</td>
+                    <td><input type="number" name="edit_role_id" readonly value="<%=edit_role_id%>"></td>
+                </tr>
+                <tr>
+                    <td>Role Title</td>
+                    <td><input type="text" name="edit_title" value="<%=edit_title%>"></td>
+                </tr>
+            </table>
+            <input type="submit" value="Edit">
+            <input type="hidden" name="action" value="update">
+            
+        </form>
+    </div>
+
+    <div>
+        <h2>Add Role</h2>
+        <form action="/roles" method="post">
+            <table>
+                <tr>
+                    <td>Role Title</td>
+                    <td><input type="text" name="new_title" ></td>
+                </tr>
+            </table>
+            <input type="submit" value="Add">
+            <input type="hidden" name="action" value="add">
+        </form>
+    </div>
+</body>
+</html>

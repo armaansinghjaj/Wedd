@@ -4,6 +4,16 @@ USE `wedddb`;
 
 
 -- -----------------------------------------------------
+-- Table `wedddb`.`user_roles`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `wedddb`.`user_roles` (
+  `role_id` INT(10) NOT NULL AUTO_INCREMENT,
+  `role_title` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`role_id`)
+);
+
+-- -----------------------------------------------------
 -- Table `wedddb`.`customer_car`
 -- -----------------------------------------------------
 -- Deletes after every ride completion
@@ -136,10 +146,13 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`current_rides` (
 -- Table `wedddb`.`news`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`news` (
-  `date` DATE,
+  `news_id` INT(2) NOT NULL AUTO_INCREMENT,
+  `start_date` DATE,
+  `end_date` DATE,
   `headline` VARCHAR(500),
   `message` VARCHAR(1000),
-  `color` VARCHAR(50)
+  `color` VARCHAR(7),
+  PRIMARY KEY (`news_id`)
 );
 
 -- -----------------------------------------------------
@@ -212,7 +225,7 @@ insert into driver (driver_id, email , first_name,last_name,password)
 values(null,'daniel@gmail.com','daniel','wong','daniel');
 
 insert into background
-values ("image/background1.JPEG",null,null,null);
+values ("image/homepage.jpg","image/aboutpage.jpg","image/contactpage.jpg","image/newspage.png");
 
 insert into admin (admin_id, email , first_name,last_name,password)
 values(null,'armaan@gmail.com','armaan','singh','munni');
@@ -220,3 +233,10 @@ insert into admin (admin_id, email , first_name,last_name,password)
 values(null,'prince@gmail.com','prince','agam','basanti');
 insert into admin (admin_id, email , first_name,last_name,password)
 values(null,'daniel@gmail.com','daniel','wong','daniel');
+
+INSERT INTO user_roles (role_id, role_title)
+VALUES (0,'Administrator');
+INSERT INTO user_roles (role_id, role_title)
+VALUES (0,'Driver');
+INSERT INTO user_roles (role_id, role_title)
+VALUES (0,'Customer');

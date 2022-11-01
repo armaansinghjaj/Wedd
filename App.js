@@ -56,7 +56,7 @@ app.use(cookieParser());
 var pool = mysql.createPool({
     connectionLimit:100,
     host: "localhost",
-    port: 3306,
+    port: 3307,
     user: "root",
     password: "password",
     database: "wedddb"
@@ -69,6 +69,8 @@ function loadDefaultValues(req){
     req.session.edit_f_name=null;
     req.session.edit_l_name=null;
     req.session.edit_email=null;
+    req.session.edit_role_id=null;
+    req.session.edit_title=null;
     req.session.name="Armaan";
 }
 
@@ -169,16 +171,48 @@ app.post("/contact", (req, res)=>{
 })
 
 app.get("/news", (req, res)=>{
+    // pool.getConnection((err, con)=>{
+    //     if (err) throw err;
+    //     con.query(`SELECT * FROM background`, function (err, result, fields) {
+    
+    //         con.release();
+    //         res.render("news", {year: new Date().getFullYear(), title: "News", news_image: result[0].news_page});
+    //     });
+    // });
+
+    let sess = req.session;
+
     pool.getConnection((err, con)=>{
         if (err) throw err;
-        con.query(`SELECT * FROM background`, function (err, result, fields) {
+        con.query(`SELECT * FROM news`, function (err, result, fields) {
     
             con.release();
-            res.render("news", {year: new Date().getFullYear(), title: "News", news_image: result[0].news_page});
+            sess.newslist=result;
+            res.render("news",sess);
+            
         });
     });
 })
 
+app.get("/roles", (req, res)=>{
+
+    loadDefaultValues(req);
+
+    let sess = req.session;
+
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`SELECT * FROM user_roles`, function (err, result, fields) {
+    
+            con.release();
+            sess.roles=result;
+            res.render("admin_roles",sess);
+            
+        });
+    });
+})
+
+// Login routes
 app.get("/login", (req, res)=>{
 
     loadDefaultValues(req);
@@ -189,11 +223,48 @@ app.post("/login", (req, res)=>{
     
 })
 
+// Signup routes
+app.get("/signup", (req, res)=>{
+
+    loadDefaultValues(req);
+
+    res.render("signup", {year: new Date().getFullYear(), title: "Signup"});
+})
+app.post("/signup", (req, res)=>{
+    
+})
+
 app.get("/admin", (req, res)=>{
 
     loadDefaultValues(req);
 
     res.render("admin_home");
+})
+
+// app.get("/news", (req, res)=>{
+
+//     loadDefaultValues(req);
+
+//     res.render("admin_home");
+// })
+
+app.get("/addnews", (req, res)=>{
+
+    loadDefaultValues(req);
+
+    res.render("admin_news");
+})
+
+app.post("/addnews", (req, res)=>{
+
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`INSERT INTO news (start_date, end_date, headline, message, color) VALUES ('${req.body.start_date}', '${req.body.end_date}','${req.body.headline}','${req.body.message}','${req.body.color}')`, function (err, result, fields) {
+    
+            con.release();
+            res.redirect("/admin");
+        });
+    });
 })
 
 app.get("/drivers", (req, res)=>{
@@ -454,7 +525,7 @@ app.get("/background", (req, res)=>{
 })
 app.post("/background", upload.single('image'), (req, res)=>{
 
-    let background_placeholder_path =  __dirname+"\\public\\backgroundPlaceholder\\Placeholder.png";
+    // let background_placeholder_path =  __dirname+"\\public\\backgroundPlaceholder\\Placeholder.png";
     
     // for home page
     if(req.body.action && req.body.action === "for_home"){
@@ -503,7 +574,7 @@ app.post("/background", upload.single('image'), (req, res)=>{
     // for about page
     else if(req.body.action && req.body.action === "for_about"){
         let originalname = req.file.originalname;
-        let imageName = "image/aboutpage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
+        let imageName = "image/aboutpage"+path.extname(originalname);
         
         pool.getConnection((err, con)=>{
             if (err) throw err;
@@ -529,7 +600,7 @@ app.post("/background", upload.single('image'), (req, res)=>{
     // for contact page
     else if(req.body.action && req.body.action === "for_contact"){
         let originalname = req.file.originalname;
-        let imageName = "image/contactpage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
+        let imageName = "image/contactpage"+path.extname(originalname);
         
         pool.getConnection((err, con)=>{
             if (err) throw err;
@@ -556,7 +627,7 @@ app.post("/background", upload.single('image'), (req, res)=>{
     // for news page
     else if(req.body.action && req.body.action === "for_news"){
         let originalname = req.file.originalname;
-        let imageName = "image/newspage"+originalname.substring(originalname.lastIndexOf("."), originalname.length);
+        let imageName = "image/newspage"+path.extname(originalname);
         
         pool.getConnection((err, con)=>{
             if (err) throw err;
