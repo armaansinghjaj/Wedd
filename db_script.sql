@@ -34,21 +34,25 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`customer_car` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`customer` (
   `customer_id` INT(10) NOT NULL AUTO_INCREMENT,
-  `customer_pp` VARCHAR(255),
+  `customer_pp` VARCHAR(255), -- profile picture
   `car_id` INT(10), -- make it null after ride completion
   `email` VARCHAR(40) NOT NULL,
-  `first_name` VARCHAR(20) NOT NULL,
-  `last_name` VARCHAR(20) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
   `password` VARCHAR(20) NOT NULL,
   `reset_password_uuid` VARCHAR(50),
   `register_account_uuid` VARCHAR(50),
   `authentication_uuid` VARCHAR(50),
   `tracking_uuid` VARCHAR(50),
+  `role` INT(2) NOT NULL DEFAULT 3,
   PRIMARY KEY (`customer_id`),
   INDEX `fk_c_car_idx` (`car_id` ASC),
   CONSTRAINT `fk_c_car_id`
     FOREIGN KEY (`car_id`)
-    REFERENCES `wedddb`.`customer_car` (`customer_car_id`)
+    REFERENCES `wedddb`.`customer_car` (`customer_car_id`),
+  INDEX `fk_c_role` (`role` ASC),
+  CONSTRAINT `fk_c_role`
+    FOREIGN KEY (`role`)
+    REFERENCES `wedddb`.`user_roles` (`role_id`)
 );
 
 
@@ -59,14 +63,18 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`driver` (
   `driver_id` INT(10) NOT NULL AUTO_INCREMENT,
   `driver_pp` VARCHAR(255),
   `email` VARCHAR(40) NOT NULL,
-  `first_name` VARCHAR(20) NOT NULL,
-  `last_name` VARCHAR(20) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
   `password` VARCHAR(20) NOT NULL,
   `reset_password_uuid` VARCHAR(50),
   `register_account_uuid` VARCHAR(50),
   `authentication_uuid` VARCHAR(50),
   `tracking_uuid` VARCHAR(50),
-  PRIMARY KEY (`driver_id`)
+  `role` INT(2) NOT NULL DEFAULT 2,
+  PRIMARY KEY (`driver_id`),
+  INDEX `fk_d_role` (`role` ASC),
+  CONSTRAINT `fk_d_role`
+    FOREIGN KEY (`role`)
+    REFERENCES `wedddb`.`user_roles` (`role_id`)
 );
 
 
@@ -90,13 +98,17 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`driver_car` (
 CREATE TABLE IF NOT EXISTS `wedddb`.`admin` (
   `admin_id` INT(10) NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(40) NOT NULL,
-  `first_name` VARCHAR(20) NOT NULL,
-  `last_name` VARCHAR(20) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
   `password` VARCHAR(20) NOT NULL,
   `reset_password_uuid` VARCHAR(50),
   `register_account_uuid` VARCHAR(50),
   `authentication_uuid` VARCHAR(50),
-  PRIMARY KEY (`admin_id`)
+  `role` INT(2) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`admin_id`),
+  INDEX `fk_a_role` (`role` ASC),
+  CONSTRAINT `fk_a_role`
+    FOREIGN KEY (`role`)
+    REFERENCES `wedddb`.`user_roles` (`role_id`)
 );
 
 
@@ -217,26 +229,33 @@ values(3,"drive");
 insert into services (service_id, service_name)
 values(4,"own");
 
-insert into driver (driver_id, email , first_name,last_name,password)
-values(null,'armaan@gmail.com','armaan','singh','munni');
-insert into driver (driver_id, email , first_name,last_name,password)
-values(null,'prince@gmail.com','prince','agam','basanti');
-insert into driver (driver_id, email , first_name,last_name,password)
-values(null,'daniel@gmail.com','daniel','wong','daniel');
-
-insert into background
-values ("image/homepage.jpg","image/aboutpage.jpg","image/contactpage.jpg","image/newspage.png");
-
-insert into admin (admin_id, email , first_name,last_name,password)
-values(null,'armaan@gmail.com','armaan','singh','munni');
-insert into admin (admin_id, email , first_name,last_name,password)
-values(null,'prince@gmail.com','prince','agam','basanti');
-insert into admin (admin_id, email , first_name,last_name,password)
-values(null,'daniel@gmail.com','daniel','wong','daniel');
-
 INSERT INTO user_roles (role_id, role_title)
 VALUES (0,'Administrator');
 INSERT INTO user_roles (role_id, role_title)
 VALUES (0,'Driver');
 INSERT INTO user_roles (role_id, role_title)
 VALUES (0,'Customer');
+
+insert into driver (driver_id, email, name, password)
+values(null,'armaan@gmail.com','armaan singh','munni');
+insert into driver (driver_id, email, name, password)
+values(null,'prince@gmail.com','prince agam','basanti');
+insert into driver (driver_id, email, name, password)
+values(null,'daniel@gmail.com','daniel wong','daniel');
+
+insert into background
+values ("image/homepage.jpg","image/aboutpage.jpg","image/contactpage.jpg","image/newspage.png");
+
+insert into admin (admin_id, email , name, password)
+values(null,'armaan@gmail.com','armaan singh','munni');
+insert into admin (admin_id, email , name, password)
+values(null,'prince@gmail.com','prince agam','basanti');
+insert into admin (admin_id, email , name, password)
+values(null,'daniel@gmail.com','daniel wong','daniel');
+
+insert into customer (customer_id, email, name, password)
+values(null,'armaan@gmail.com','armaan singh','munni');
+insert into customer (customer_id, email, name, password)
+values(null,'prince@gmail.com','prince agam','basanti');
+insert into customer (customer_id, email, name, password)
+values(null,'daniel@gmail.com','daniel wong','daniel');
