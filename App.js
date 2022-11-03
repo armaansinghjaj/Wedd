@@ -56,7 +56,7 @@ app.use(cookieParser());
 var pool = mysql.createPool({
     connectionLimit:100,
     host: "localhost",
-    port: 3307,
+    port: 3306,
     user: "root",
     password: "password",
     database: "wedddb"
