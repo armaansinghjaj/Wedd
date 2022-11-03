@@ -20,3 +20,6 @@
         <li><a href="/login">Login</a></li>
         <li><a href="/admin">Admin</a></li>
     </ul>
+    <% if (!(typeof user == 'undefined')) { %>
+        <h4>Logged in</h4>
+    <% } %>
