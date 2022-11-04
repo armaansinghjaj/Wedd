@@ -51,12 +51,12 @@ app.use(cookieParser());
 
 // create database connection
 var pool = mysql.createPool({
-    connectionLimit:100,
-    host: "localhost",
-    port: 3307,
-    user: "root",
-    password: "password",
-    database: "wedddb"
+  connectionLimit: 100,
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "password",
+  database: "wedddb",
 });
 
 function loadDefaultValues(req) {
@@ -241,29 +241,20 @@ app.post("/login", (req, res) => {
     pool.getConnection((err, con) => {
       if (err) throw err;
       con.query(
-        `SELECT email, password, role, name FROM driver WHERE email = '${req.body.email}'
+        `SELECT email, password, role, name FROM customer WHERE email = '${req.body.email}'
         union all
-        SELECT email, password, role, name FROM admin WHERE email = '${req.body.email}'
-        union all
-        SELECT email, password, role, name FROM customer WHERE email = '${req.body.email}'`,
+        SELECT email, password, role, name FROM employees WHERE email = '${req.body.email}'`,
         function (err, result, fields) {
           con.release();
           if (err) {
-            res.render("login", {
-              message: "backendError",
-              email: `${req.body.email}`,
-              password: `${req.body.password}`,
-              description: "Something went wrong! Please try agian.",
-            });
+            res.send("backend error");
           }
 
           if (result.length > 0) {
             if (result[0].password === req.body.password) {
-              // update user object in the session
-              sess.user = result[0];
-
+              sess.useremail = req.body.email;
               if (result[0].role === 3) {
-                res.redirect("/home");
+                res.redirect("/");
                 return;
               } else if (result[0].role === 2) {
                 res.redirect("/driver");
@@ -273,20 +264,10 @@ app.post("/login", (req, res) => {
                 return;
               }
             } else {
-              res.render("login", {
-                message: "invalidPassword",
-                email: `${req.body.email}`,
-                password: `${req.body.password}`,
-                description: "Invalid password.",
-              });
+              res.send("invalid password");
             }
           } else {
-            res.render("login", {
-              message: "invalidEmail",
-              email: `${req.body.email}`,
-              password: `${req.body.password}`,
-              description: "No user for this email",
-            });
+            res.send("invalid email");
           }
         }
       );
@@ -319,9 +300,8 @@ app.post("/signup", (req, res)=>{
     });
 })
 
-app.get("/admin", (req, res)=>{
-
-    loadDefaultValues(req);
+app.get("/admin", (req, res) => {
+  loadDefaultValues(req);
 
   res.render("admin_home");
 });
