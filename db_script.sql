@@ -142,11 +142,11 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`active_driver` (
   INDEX `fk_driver_1_idx` (`driver_1_id` ASC),
   CONSTRAINT `fk_driver_1_id`
     FOREIGN KEY (`driver_1_id`)
-    REFERENCES `wedddb`.`driver` (`driver_id`),
+    REFERENCES `wedddb`.`employees` (`employee_id`),
   INDEX `fk_driver_2_idx` (`driver_2_id` ASC),
   CONSTRAINT `fk_driver_2_id`
     FOREIGN KEY (`driver_2_id`)
-    REFERENCES `wedddb`.`driver` (`driver_id`),
+    REFERENCES `wedddb`.`employees` (`employee_id`),
   INDEX `fk_d_car_idx` (`car_id` ASC),
   CONSTRAINT `fk_d_car_id`
     FOREIGN KEY (`car_id`)
@@ -256,28 +256,21 @@ VALUES (0,'Driver');
 INSERT INTO user_roles (role_id, role_title)
 VALUES (0,'Customer');
 
-INSERT INTO employees (driver_id, email, name, password, role)
+INSERT INTO employees (employee_id, email, name, password, role)
 VALUES(NULL,'admin1`@gmail.com','Admin 1','password', 1);
-INSERT INTO employees (driver_id, email, name, password, role)
+INSERT INTO employees (employee_id, email, name, password, role)
 VALUES(NULL,'admin2@gmail.com','Admin 1','password', 1);
-INSERT INTO employees (driver_id, email, name, password, role)
+INSERT INTO employees (employee_id, email, name, password, role)
 VALUES(NULL,'admin3@gmail.com','Admin 1','password', 1);
-INSERT INTO employees (driver_id, email, name, password, role)
+INSERT INTO employees (employee_id, email, name, password, role)
 VALUES(NULL,'driver1@gmail.com','Driver 1','password', 2);
-INSERT INTO employees (driver_id, email, name, password, role)
+INSERT INTO employees (employee_id, email, name, password, role)
 VALUES(NULL,'driver2@gmail.com','Driver 1','password', 2);
-INSERT INTO employees (driver_id, email, name, password, role)
+INSERT INTO employees (employee_id, email, name, password, role)
 VALUES(NULL,'driver3@gmail.com','Driver 1','password', 2);
 
 INSERT INTO background
 VALUES ("image/homepage.jpg","image/aboutpage.jpg","image/contactpage.jpg","image/newspage.png");
-
-INSERT INTO admin (admin_id, email , name, password)
-VALUES(NULL,'armaan@gmail.com','armaan singh','munni');
-INSERT INTO admin (admin_id, email , name, password)
-VALUES(NULL,'prince@gmail.com','prince agam','basanti');
-INSERT INTO admin (admin_id, email , name, password)
-VALUES(NULL,'daniel@gmail.com','daniel wong','daniel');
 
 INSERT INTO customer (customer_id, email, name, password)
 VALUES(NULL,'armaan@gmail.com','armaan singh','munni');
