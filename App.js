@@ -56,7 +56,7 @@ app.use(cookieParser());
 var pool = mysql.createPool({
     connectionLimit:100,
     host: "localhost",
-    port: 3306,
+    port: 3307,
     user: "root",
     password: "password",
     database: "wedddb"
@@ -231,7 +231,19 @@ app.get("/signup", (req, res)=>{
     res.render("signup", {year: new Date().getFullYear(), title: "Signup"});
 })
 app.post("/signup", (req, res)=>{
+
+    if(req.body.email===''||req.body.name===''||req.body.password===''){
+        return;
+    }
     
+    pool.getConnection((err, con)=>{
+        if (err) throw err;
+        con.query(`INSERT INTO customer (customer_id, email, name, password) VALUES (null, '${req.body.email}','${req.body.name}','${req.body.password}')`, function (err, result, fields) {
+            con.release();
+
+            res.redirect("/");
+        });
+    });
 })
 
 app.get("/admin", (req, res)=>{

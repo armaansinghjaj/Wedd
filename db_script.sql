@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`customer` (
 -- -----------------------------------------------------
 -- Table `wedddb`.`driver`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wedddb`.`driver` (
+/* CREATE TABLE IF NOT EXISTS `wedddb`.`driver` (
   `driver_id` INT(10) NOT NULL AUTO_INCREMENT,
   `driver_pp` VARCHAR(255),
   `email` VARCHAR(40) NOT NULL,
@@ -73,6 +73,26 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`driver` (
   PRIMARY KEY (`driver_id`),
   INDEX `fk_d_role` (`role` ASC),
   CONSTRAINT `fk_d_role`
+    FOREIGN KEY (`role`)
+    REFERENCES `wedddb`.`user_roles` (`role_id`)
+); */
+
+-- -----------------------------------------------------
+-- Table `wedddb`.`employees`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wedddb`.`employees` (
+  `employee_id` INT(10) NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(40) NOT NULL,
+  `name` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(20) NOT NULL,
+  `reset_password_uuid` VARCHAR(50),
+  `register_account_uuid` VARCHAR(50),
+  `authentication_uuid` VARCHAR(50),
+  `tracking_uuid` VARCHAR(50),
+  `role` INT(2) NOT NULL,
+  PRIMARY KEY (`employee_id`),
+  INDEX `fk_a_role` (`role` ASC),
+  CONSTRAINT `fk_a_role`
     FOREIGN KEY (`role`)
     REFERENCES `wedddb`.`user_roles` (`role_id`)
 );
@@ -95,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`driver_car` (
 -- -----------------------------------------------------
 -- Table `wedddb`.`admin`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wedddb`.`admin` (
+/* CREATE TABLE IF NOT EXISTS `wedddb`.`admin` (
   `admin_id` INT(10) NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(40) NOT NULL,
   `name` VARCHAR(50) NOT NULL,
@@ -109,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`admin` (
   CONSTRAINT `fk_a_role`
     FOREIGN KEY (`role`)
     REFERENCES `wedddb`.`user_roles` (`role_id`)
-);
+); */
 
 
 -- -----------------------------------------------------
@@ -220,14 +240,14 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`rideRequests` (
   PRIMARY KEY (`request_id`)
 );
 
-insert into services (service_id, service_name)
-values(1,"shuttle");
-insert into services (service_id, service_name)
-values(2,"chauffeur");
-insert into services (service_id, service_name)
-values(3,"drive");
-insert into services (service_id, service_name)
-values(4,"own");
+INSERT INTO services (service_id, service_name)
+VALUES(1,"shuttle");
+INSERT INTO services (service_id, service_name)
+VALUES(2,"chauffeur");
+INSERT INTO services (service_id, service_name)
+VALUES(3,"drive");
+INSERT INTO services (service_id, service_name)
+VALUES(4,"own");
 
 INSERT INTO user_roles (role_id, role_title)
 VALUES (0,'Administrator');
@@ -236,26 +256,32 @@ VALUES (0,'Driver');
 INSERT INTO user_roles (role_id, role_title)
 VALUES (0,'Customer');
 
-insert into driver (driver_id, email, name, password)
-values(null,'armaan@gmail.com','armaan singh','munni');
-insert into driver (driver_id, email, name, password)
-values(null,'prince@gmail.com','prince agam','basanti');
-insert into driver (driver_id, email, name, password)
-values(null,'daniel@gmail.com','daniel wong','daniel');
+INSERT INTO employees (driver_id, email, name, password, role)
+VALUES(NULL,'admin1`@gmail.com','Admin 1','password', 1);
+INSERT INTO employees (driver_id, email, name, password, role)
+VALUES(NULL,'admin2@gmail.com','Admin 1','password', 1);
+INSERT INTO employees (driver_id, email, name, password, role)
+VALUES(NULL,'admin3@gmail.com','Admin 1','password', 1);
+INSERT INTO employees (driver_id, email, name, password, role)
+VALUES(NULL,'driver1@gmail.com','Driver 1','password', 2);
+INSERT INTO employees (driver_id, email, name, password, role)
+VALUES(NULL,'driver2@gmail.com','Driver 1','password', 2);
+INSERT INTO employees (driver_id, email, name, password, role)
+VALUES(NULL,'driver3@gmail.com','Driver 1','password', 2);
 
-insert into background
-values ("image/homepage.jpg","image/aboutpage.jpg","image/contactpage.jpg","image/newspage.png");
+INSERT INTO background
+VALUES ("image/homepage.jpg","image/aboutpage.jpg","image/contactpage.jpg","image/newspage.png");
 
-insert into admin (admin_id, email , name, password)
-values(null,'armaan@gmail.com','armaan singh','munni');
-insert into admin (admin_id, email , name, password)
-values(null,'prince@gmail.com','prince agam','basanti');
-insert into admin (admin_id, email , name, password)
-values(null,'daniel@gmail.com','daniel wong','daniel');
+INSERT INTO admin (admin_id, email , name, password)
+VALUES(NULL,'armaan@gmail.com','armaan singh','munni');
+INSERT INTO admin (admin_id, email , name, password)
+VALUES(NULL,'prince@gmail.com','prince agam','basanti');
+INSERT INTO admin (admin_id, email , name, password)
+VALUES(NULL,'daniel@gmail.com','daniel wong','daniel');
 
-insert into customer (customer_id, email, name, password)
-values(null,'armaan@gmail.com','armaan singh','munni');
-insert into customer (customer_id, email, name, password)
-values(null,'prince@gmail.com','prince agam','basanti');
-insert into customer (customer_id, email, name, password)
-values(null,'daniel@gmail.com','daniel wong','daniel');
+INSERT INTO customer (customer_id, email, name, password)
+VALUES(NULL,'armaan@gmail.com','armaan singh','munni');
+INSERT INTO customer (customer_id, email, name, password)
+VALUES(NULL,'prince@gmail.com','prince agam','basanti');
+INSERT INTO customer (customer_id, email, name, password)
+VALUES(NULL,'daniel@gmail.com','daniel wong','daniel');
