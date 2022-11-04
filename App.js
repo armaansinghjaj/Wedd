@@ -6,6 +6,7 @@ var mysql = require("mysql");
 var fs = require("fs");
 var path = require("path");
 const multer = require("multer");
+let alert = require('alert');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -300,7 +301,22 @@ app.get("/signup", (req, res) => {
     res.render("signup", {year: new Date().getFullYear(), title: "Signup"});
 })
 app.post("/signup", (req, res)=>{
+
+    if(req.body.email===''||req.body.name===''||req.body.password===''){
+        alert("Sorry, try again!");
+        // res.redirect("/signup");
+        return;
+    }
     
+    pool.getConnection((err, con) => {
+        if (err) throw err;
+
+        con.query(`INSERT INTO customer (customer_id, email, name, password) VALUES (0, '${req.body.email}','${req.body.name}','${req.body.password}')`, function (err, result, fields) {
+            con.release();
+            
+            res.redirect("/");
+        });
+    });
 })
 
 app.get("/admin", (req, res)=>{
@@ -378,7 +394,7 @@ app.post("/drivers", (req, res) => {
     pool.getConnection((err, con) => {
       if (err) throw err;
       con.query(
-        `DELETE FROM driver WHERE driver_id = '${req.body.selected}' `,
+        `DELETE FROM driver WHERE driver_id = '${req.body.selected}'`,
         function (err, result, fields) {
           con.release();
           res.redirect("/drivers");
