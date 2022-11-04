@@ -237,25 +237,25 @@ INSERT INTO user_roles (role_id, role_title)
 VALUES (0,'Customer');
 
 insert into driver (driver_id, email, name, password)
-values(null,'armaan@gmail.com','armaan singh','munni');
+values(null,'armaandriver@gmail.com','armaan singh','munni');
 insert into driver (driver_id, email, name, password)
-values(null,'prince@gmail.com','prince agam','basanti');
+values(null,'princedriver@gmail.com','prince agam','basanti');
 insert into driver (driver_id, email, name, password)
-values(null,'daniel@gmail.com','daniel wong','daniel');
+values(null,'danieldriver@gmail.com','daniel wong','daniel');
 
 insert into background
 values ("image/homepage.jpg","image/aboutpage.jpg","image/contactpage.jpg","image/newspage.png");
 
 insert into admin (admin_id, email , name, password)
-values(null,'armaan@gmail.com','armaan singh','munni');
+values(null,'armaanadmin@gmail.com','armaan singh','munni');
 insert into admin (admin_id, email , name, password)
-values(null,'prince@gmail.com','prince agam','basanti');
+values(null,'princeadmin@gmail.com','prince agam','basanti');
 insert into admin (admin_id, email , name, password)
-values(null,'daniel@gmail.com','daniel wong','daniel');
+values(null,'danieladmin@gmail.com','daniel wong','daniel');
 
 insert into customer (customer_id, email, name, password)
-values(null,'armaan@gmail.com','armaan singh','munni');
+values(null,'armaancustomer@gmail.com','armaan singh','munni');
 insert into customer (customer_id, email, name, password)
-values(null,'prince@gmail.com','prince agam','basanti');
+values(null,'princecustomer@gmail.com','prince agam','basanti');
 insert into customer (customer_id, email, name, password)
-values(null,'daniel@gmail.com','daniel wong','daniel');
+values(null,'danielcustomer@gmail.com','daniel wong','daniel');
