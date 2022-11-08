@@ -257,7 +257,7 @@ INSERT INTO user_roles (role_id, role_title)
 VALUES (0,'Customer');
 
 INSERT INTO employees (employee_id, email, name, password, role)
-VALUES(NULL,'admin1`@gmail.com','Admin 1','password', 1);
+VALUES(NULL,'admin1@gmail.com','Admin 1','password', 1);
 INSERT INTO employees (employee_id, email, name, password, role)
 VALUES(NULL,'admin2@gmail.com','Admin 1','password', 1);
 INSERT INTO employees (employee_id, email, name, password, role)
