@@ -9,30 +9,28 @@
 <body>
     <table>
         <tr>
-            <th>admin ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Employee ID</th>
+            <th>Name</th>
             <th>E-mail</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
         <% admins.forEach(admin => { %>
             <tr>
-                <td><%=admin.admin_id%></td>
-                <td><%=admin.first_name%></td>
-                <td><%=admin.last_name%></td>
+                <td><%=admin.employee_id%></td>
+                <td><%=admin.name%></td>
                 <td><%=admin.email%></td>
                 <td>
                     <form action='/admins' method='post'>
                         <input type='submit' value='edit' name='edit'>
-                        <input type='hidden' name='selected' value='<%=admin.admin_id%>'>
+                        <input type='hidden' name='selected' value='<%=admin.employee_id%>'>
                         <input type='hidden' name='action'  value='edit'>
                     </form>
                 </td>
                 <td>
                     <form action='/admins' method='post'>
                         <input type='submit' value='delete' name='delete'>
-                        <input type='hidden' name='selected' value='<%=admin.admin_id%>'>
+                        <input type='hidden' name='selected' value='<%=admin.employee_id%>'>
                         <input type='hidden' name='action'  value='delete'>
                     </form>
                 </td>
@@ -54,12 +52,8 @@
                     <td><input type="email" name="edit_email" value="<%= edit_email %>"></td>
                 </tr>
                 <tr>
-                    <td>First Name</td>
-                    <td><input type="text" name="edit_f_name" value="<%= edit_f_name %>"></td>
-                </tr>
-                <tr>
-                    <td>Last Name</td>
-                    <td><input type="text" name="edit_l_name" value="<%= edit_l_name %>"></td>
+                    <td>Name</td>
+                    <td><input type="text" name="edit_name" value="<%= edit_name %>"></td>
                 </tr>
             </table>
             <input type="submit" value="Edit">
@@ -78,11 +72,7 @@
                 </tr>
                 <tr>
                     <td>First Name</td>
-                    <td><input type="text" name="new_f_name" ></td>
-                </tr>
-                <tr>
-                    <td>Last Name</td>
-                    <td><input type="text" name="new_l_name" ></td>
+                    <td><input type="text" name="new_name" ></td>
                 </tr>
                 <tr>
                     <td>Password</td>
