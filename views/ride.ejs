@@ -1,42 +1,44 @@
 <%- include("header") -%>
 
-<h1>Contact Information</h1>
-<form method="post" action="/ride">
-    <label>First name:</label>
-    <input type="text" name="f_name"><br>
-    <label>Last name:</label>
-    <input type="text" name="l_name"><br>
-    <label>Email:</label>
-    <input type="email" name="email"><br>
-    <label>Phone:</label>
-    <input type="text" name="phone"><br>
-    <h1>Location</h1>
-    <label>Pickup address:</label>
-    <input type="text" name="pick"><br>
-    <label>Destination:</label>
-    <input type="text" name="destination"><br>
-    <label>Pickup time:</label>
-    <input type="datetime-local" name="destination"><br>
-    <h2>Payment type</h2>
-    <table>
-        <tr>
-            <td><input type="radio" name="pay_paypal"></td>
-            <td>Paypal</td>
-        </tr>
-        <tr>
-            <td><input type="radio" name="pay_apple_pay"></td>
-            <td>Apple pay</td>
-        </tr>
-        <tr>
-            <td><input type="radio" name="pay_credit_card"></td>
-            <td>Credit card</td>
-        </tr>
-        <tr>
-            <td><input type="radio" name="pay_debit_card"></td>
-            <td>Debit card</td>
-        </tr>
-    </table>
-    <input type="submit">
-</form>
+<% if (typeof ride_processed === 'undefined') { %>
+
+    <h1>Contact Information</h1>
+    <form method="post" action="/ride">
+        <label>First name:</label>
+        <input type="text" name="f_name"><br>
+        <label>Last name:</label>
+        <input type="text" name="l_name"><br>
+        <label>Email:</label>
+        <input type="email" name="email"><br>
+        <label>Phone:</label>
+        <input type="text" name="phone"><br>
+        <h1>Location</h1>
+        <label>Pickup address:</label>
+        <input type="text" name="pick"><br>
+        <label>Destination:</label>
+        <input type="text" name="destination"><br>
+        <label>Pickup time:</label>
+        <input type="datetime-local" name="destination"><br>
+        <h2>Payment type</h2>
+        <table>
+            <tr>
+                <td><input type="radio" name="pay_credit_card"></td>
+                <td>Credit card</td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="pay_debit_card"></td>
+                <td>Debit card</td>
+            </tr>
+            <tr>
+                <td><input type="radio" name="pay_cash"></td>
+                <td>Cash</td>
+            </tr>
+        </table>
+        <input type="submit">
+    </form>
+<% } else if (ride_processed === 'true') { %>
+    <h5>Request Sent</h5> <br>
+    <a href="/ride?action=cancel">Cancel the ride</a>
+<% } %>
 
 <%- include("footer") -%>

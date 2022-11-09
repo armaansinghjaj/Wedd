@@ -53,7 +53,7 @@ app.use(cookieParser());
 var pool = mysql.createPool({
   connectionLimit: 100,
   host: "localhost",
-  port: 3306,
+  port: 3307,
   user: "root",
   password: "password",
   database: "wedddb",
@@ -68,7 +68,6 @@ function loadDefaultValues(req) {
   req.session.edit_email = null;
   req.session.edit_role_id = null;
   req.session.edit_title = null;
-  req.session.name = "Armaan";
 }
 
 // --------------------------------- routes ---------------------------------------
@@ -103,13 +102,7 @@ app.post("/ride", (req, res) => {
   let pick = req.body.pick;
   let destination = req.body.destination;
 
-  if (
-    name === "" ||
-    email === "" ||
-    phone === "" ||
-    pick === "" ||
-    destination === ""
-  ) {
+  if (name === "" || email === "" || phone === "" || pick === "" || destination === "") {
     res.send("error");
     return;
   }
@@ -285,7 +278,6 @@ app.post("/signup", (req, res)=>{
 
     if(req.body.email===''||req.body.name===''||req.body.password===''){
         alert("Sorry, try again!");
-        // res.redirect("/signup");
         return;
     }
     
