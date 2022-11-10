@@ -62,15 +62,14 @@ var pool = mysql.createPool({
 
 function loadDefaultValues(req) {
 	req.session.drivers = [];
-	req.session.edit_driver_id = null;
-	req.session.edit_admin_id = null;
+	req.session.edit_employee_id = null;
 	req.session.edit_name = null;
 	req.session.edit_email = null;
 	req.session.edit_role_id = null;
 	req.session.edit_title = null;
 	if (!(req.session.access)) {
-		req.session.access = 0; 
-		req.session.user = null;
+		req.session.access = 3; 
+		req.session.user = "test";
 	}
 	
 }
@@ -401,10 +400,11 @@ app.post("/addnews", (req, res) => {
 	});
 });
 
-app.get("/drivers", (req, res) => { 
+app.get("/drivers", (req, res) => {
 	loadDefaultValues(req);
 	
 	let sess = req.session;
+
 	if (sess.access < 3){
 		res.redirect("/");
 		return;
@@ -412,34 +412,33 @@ app.get("/drivers", (req, res) => {
 
 	pool.getConnection((err, con) => {
 		if (err) throw err;
-		con.query(`SELECT * FROM driver `, function (err, result, fields) {
+		con.query(`SELECT * FROM employees WHERE role = 2 `, function (err, result, fields) {
 			con.release();
 
 			sess.drivers = result;
+
 			res.render("drivers", sess);
 		});
 	});
 });
 app.post("/drivers", (req, res) => {
 	let sess = req.session;
+	
 	if (sess.access < 3){
 		res.redirect("/");
 		return;
 	}
-
 	let action = req.body.action;
-	
 
 	if (action === "edit") {
 		pool.getConnection((err, con) => {
 			if (err) throw err;
-			con.query(`SELECT * FROM driver WHERE driver_id = '${req.body.selected}' `, function (err, result, fields) {
+			con.query(`SELECT * FROM employees WHERE employee_id = '${req.body.selected}' `, function (err, result, fields) {
 				con.release();
 
-				sess.edit_driver_id = result[0].driver_id;
+				sess.edit_employee_id = result[0].employee_id;
 				sess.edit_email = result[0].email;
-				sess.edit_f_name = result[0].first_name;
-				sess.edit_l_name = result[0].last_name;
+				sess.edit_name = result[0].name;
 
 				res.render("drivers", sess);
 				return;
@@ -449,7 +448,8 @@ app.post("/drivers", (req, res) => {
 	if (action === "delete") {
 		pool.getConnection((err, con) => {
 			if (err) throw err;
-			con.query(`DELETE FROM driver WHERE driver_id = '${req.body.selected}'`, function (err, result, fields) {
+
+			con.query(`DELETE FROM employees WHERE employee_id = '${req.body.selected}' `, function (err, result, fields) {
 				con.release();
 				res.redirect("/drivers");
 				return;
@@ -462,8 +462,9 @@ app.post("/drivers", (req, res) => {
 		} else {
 			pool.getConnection((err, con) => {
 				if (err) throw err;
-				con.query(`UPDATE driver set first_name = '${req.body.edit_f_name}', last_name = '${req.body.edit_l_name}', email = '${req.body.edit_email}' WHERE driver_id = '${req.body.edit_driver_id}' `, function (err, result, fields) {
+				con.query(`UPDATE employees set name = '${req.body.edit_name}', email = '${req.body.edit_email}' WHERE employee_id = '${req.body.edit_employee_id}' `, function (err, result, fields) {
 					con.release();
+
 					res.redirect("/drivers");
 					return;
 				});
@@ -471,12 +472,12 @@ app.post("/drivers", (req, res) => {
 		}
 	}
 	if (action === "add") {
-		if (req.body.new_f_name === "" || req.body.new_l_name === "" || req.body.new_email === "" || req.body.new_password === "") {
+		if (req.body.new_name === "" || req.body.new_email === "" || req.body.new_password === "") {
 			res.send("error");
 		} else {
 			pool.getConnection((err, con) => {
 				if (err) throw err;
-				con.query(`INSERT INTO driver (driver_id, email , first_name,last_name,password) VALUES (0,'${req.body.new_email}','${req.body.new_f_name}','${req.body.new_l_name}','${req.body.new_password}')`, function (err, result, fields) {
+				con.query(`INSERT INTO employees (employee_id, email , name, password, role) VALUES (0,'${req.body.new_email}','${req.body.new_name}','${req.body.new_password}', 2)`, function (err, result, fields) {
 					con.release();
 					res.redirect("/drivers");
 				});
@@ -521,10 +522,9 @@ app.post("/admins", (req, res) => {
 			con.query(`SELECT * FROM employees WHERE employee_id = '${req.body.selected}' `, function (err, result, fields) {
 				con.release();
 
-				sess.edit_admin_id = result[0].admin_id;
+				sess.edit_employee_id = result[0].employee_id;
 				sess.edit_email = result[0].email;
-				sess.edit_f_name = result[0].first_name;
-				sess.edit_l_name = result[0].last_name;
+				sess.edit_name = result[0].name;
 
 				res.render("admins", sess);
 				return;
@@ -548,7 +548,7 @@ app.post("/admins", (req, res) => {
 		} else {
 			pool.getConnection((err, con) => {
 				if (err) throw err;
-				con.query(`UPDATE employees set name = '${req.body.edit_name}', email = '${req.body.edit_email}' WHERE employeee_id = '${req.body.edit_admin_id}' `, function (err, result, fields) {
+				con.query(`UPDATE employees set name = '${req.body.edit_name}', email = '${req.body.edit_email}' WHERE employee_id = '${req.body.edit_employee_id}' `, function (err, result, fields) {
 					con.release();
 
 					res.redirect("/admins");
@@ -558,12 +558,12 @@ app.post("/admins", (req, res) => {
 		}
 	}
 	if (action === "add") {
-		if (req.body.new_f_name === "" || req.body.new_l_name === "" || req.body.new_email === "" || req.body.new_password === "") {
+		if (req.body.new_name === "" || req.body.new_email === "" || req.body.new_password === "") {
 			res.send("error");
 		} else {
 			pool.getConnection((err, con) => {
 				if (err) throw err;
-				con.query(`INSERT INTO admin (admin_id, email , first_name,last_name,password) VALUES (0,'${req.body.new_email}','${req.body.new_f_name}','${req.body.new_l_name}','${req.body.new_password}')`, function (err, result, fields) {
+				con.query(`INSERT INTO employees (employee_id, email , name, password, role) VALUES (0,'${req.body.new_email}','${req.body.new_name}','${req.body.new_password}', 1)`, function (err, result, fields) {
 					con.release();
 					res.redirect("/admins");
 				});

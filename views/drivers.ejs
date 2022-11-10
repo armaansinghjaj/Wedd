@@ -4,36 +4,34 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drivers</title>
+    <title>drivers</title>
 </head>
 <body>
     <table>
         <tr>
-            <th>Driver ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Employee ID</th>
+            <th>Name</th>
             <th>E-mail</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
         <% drivers.forEach(driver => { %>
             <tr>
-                <td><%=driver.driver_id%></td>
-                <td><%=driver.first_name%></td>
-                <td><%=driver.last_name%></td>
+                <td><%=driver.employee_id%></td>
+                <td><%=driver.name%></td>
                 <td><%=driver.email%></td>
                 <td>
                     <form action='/drivers' method='post'>
                         <input type='submit' value='edit' name='edit'>
-                        <input type='hidden' name='selected' value='<%=driver.driver_id%>'>
-                        <input type='hidden' name='action' value='edit'>
+                        <input type='hidden' name='selected' value='<%=driver.employee_id%>'>
+                        <input type='hidden' name='action'  value='edit'>
                     </form>
                 </td>
                 <td>
                     <form action='/drivers' method='post'>
                         <input type='submit' value='delete' name='delete'>
-                        <input type='hidden' name='selected' value='<%=driver.driver_id%>'>
-                        <input type='hidden' name='action'value='delete'>
+                        <input type='hidden' name='selected' value='<%=driver.employee_id%>'>
+                        <input type='hidden' name='action'  value='delete'>
                     </form>
                 </td>
             </tr>
@@ -42,24 +40,20 @@
     </table>
 
     <div>
-        <h2>Edit Driver</h2>
+        <h2>Edit driver</h2>
         <form action="/drivers" method="post">
             <table>
                 <tr>
-                    <td>Driver ID</td>
-                    <td><input type="number" name="edit_driver_id" readonly value="<%=edit_driver_id%>"></td>
+                    <td>Employee ID</td>
+                    <td><input type="number" name="edit_employee_id" readonly value="<%= edit_employee_id%>"></td>
                 </tr>
                 <tr>
                     <td>E-mail</td>
-                    <td><input type="email" name="edit_email" value="<%=edit_email%>"></td>
+                    <td><input type="email" name="edit_email" value="<%= edit_email %>"></td>
                 </tr>
                 <tr>
-                    <td>First Name</td>
-                    <td><input type="text" name="edit_f_name" value="<%=edit_f_name%>"></td>
-                </tr>
-                <tr>
-                    <td>Last Name</td>
-                    <td><input type="text" name="edit_l_name" value="<%=edit_l_name%>"></td>
+                    <td>Name</td>
+                    <td><input type="text" name="edit_name" value="<%= edit_name %>"></td>
                 </tr>
             </table>
             <input type="submit" value="Edit">
@@ -77,12 +71,8 @@
                     <td><input type="email" name="new_email" ></td>
                 </tr>
                 <tr>
-                    <td>First Name</td>
-                    <td><input type="text" name="new_f_name" ></td>
-                </tr>
-                <tr>
-                    <td>Last Name</td>
-                    <td><input type="text" name="new_l_name" ></td>
+                    <td>Name</td>
+                    <td><input type="text" name="new_name" ></td>
                 </tr>
                 <tr>
                     <td>Password</td>
