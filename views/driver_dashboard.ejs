@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver | Dashboard</title>
+</head>
+<body>
+<div class="container">
+    <a href="/">Home</a> <br> <br>
+    <button class="start_shift">Start shift</button> <br>
+    <div class="start_form_container" style="display: none;">
+        <form action="/driver?daction=startdata" method="POST">
+            <input type="text" name="driver_1_id" placeholder="Driver 1 ID"> <br>
+            <input type="text" name="driver_2_id" placeholder="Driver 2 ID"> <br>
+            <input type="text" name="car_id" placeholder="Car ID"> <br>
+            <input type="submit" value="Confirm" name="shift_start"> <br> <br>
+        </form>
+    </div> <br>
+    <button class="end_shift">End shift</button> <br>
+    <div class="end_form_container" style="display: none;">
+        <p>Are you sure you want to end your shift?</p>
+        <form action="/driver?daction=end" method="POST">
+            <input type="submit" value="Confirm">
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    document.getElementsByClassName("start_shift")[0].addEventListener('click', ()=>{
+        if(document.getElementsByClassName("start_form_container")[0].style.display == "block"){
+            document.getElementsByClassName("start_form_container")[0].style.display = "none";
+        }
+        else{
+            document.getElementsByClassName("start_form_container")[0].style.display = "block";
+        }
+    })
+    document.getElementsByClassName("end_shift")[0].addEventListener('click', ()=>{
+        if(document.getElementsByClassName("end_form_container")[0].style.display == "block"){
+            document.getElementsByClassName("end_form_container")[0].style.display = "none";
+        }
+        else{
+            document.getElementsByClassName("end_form_container")[0].style.display = "block";
+        }
+    })
+</script>
+</html>

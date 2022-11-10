@@ -103,12 +103,15 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`employees` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`driver_car` (
   `driver_car_id` INT(10) NOT NULL AUTO_INCREMENT,
-  `model_number` VARCHAR(50) NOT NULL,
+  `manufacturer` VARCHAR(20) NOT NULL,
+  `model` VARCHAR(20) NOT NULL,
+  `model_number` VARCHAR(20) NOT NULL,
+  `year` INT(4) NOT NULL,
   `color` VARCHAR(20) NOT NULL,
-  /* `car_type` VARCHAR(1) NOT NULL, */
+  `car_type` CHAR(1) NOT NULL,
   `licence_plate` VARCHAR(10) NOT NULL,
-  PRIMARY KEY (`driver_car_id`)
-  /* CONSTRAINT CHK_Type CHECK car_type IN ('A', 'M') -- Automatic or manual */
+  PRIMARY KEY (`driver_car_id`),
+  CONSTRAINT CHK_Type CHECK (car_type IN ('A', 'M')) -- Automatic or manual
 );
 
 
@@ -136,9 +139,11 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`driver_car` (
 -- Table `wedddb`.`active_driver`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`active_driver` (
+  `active_drive_session_id` VARCHAR(16) NOT NULL,
   `driver_1_id` INT(10) NOT NULL,
   `driver_2_id` INT(10),
   `car_id` INT(10) NOT NULL,
+  `start_time` DATE NOT NULL,
   INDEX `fk_driver_1_idx` (`driver_1_id` ASC),
   CONSTRAINT `fk_driver_1_id`
     FOREIGN KEY (`driver_1_id`)
@@ -278,3 +283,6 @@ INSERT INTO customer (customer_id, email, name, password)
 VALUES(NULL,'prince@gmail.com','prince agam','basanti');
 INSERT INTO customer (customer_id, email, name, password)
 VALUES(NULL,'daniel@gmail.com','daniel wong','daniel');
+
+INSERT INTO driver_car (driver_car_id, manufacturer, model, model_number, year, color, car_type, licence_plate)
+VALUES(NULL,'Honda', 'Civic', 'hcx-186bh', 2016, 'Pale yellow', 'A', 'CAR-2016');

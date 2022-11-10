@@ -7,6 +7,7 @@ var fs = require("fs");
 var path = require("path");
 const multer = require("multer");
 let alert = require("alert");
+const crypto = require("crypto");
 
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -334,12 +335,42 @@ app.get("/admin", (req, res) => {
 	res.render("admin_home");
 });
 
-// app.get("/news", (req, res)=>{
+// driver dashboard
+app.get("/driver", (req, res)=>{
+	loadDefaultValues(req);
+	res.render("driver_dashboard");
+})
+app.post("/driver", (req, res)=>{
 
-//     loadDefaultValues(req);
+	let sess = req.session;
 
-//     res.render("admin_home");
-// })
+	if(req.query.daction === 'startdata'){
+		pool.getConnection((err, con) => {
+			if (err) throw err;
+			
+			const drive_session_id = crypto.randomBytes(16).toString("hex");
+			con.query(`INSERT INTO active_driver (active_drive_session_id, driver_1_id, driver_2_id, car_id, start_time) VALUES (${drive_session_id}, 0, '${req.body.driver_1_id}','${req.body.driver_2_id}','${req.body.car_id}', 'SYSDATE')`, function (err, result, fields) {
+				con.release();
+				
+				sess.drive_session_id = drive_session_id;
+				res.render("new_ride_driver");
+				return;
+			});
+		});
+	}
+	else if(req.query.daction === 'end'){
+		pool.getConnection((err, con) => {
+			if (err) throw err;
+	
+			con.query(`DELETE FROM active_driver WHERE drive_session_id = ${sess.drive_session_id}`, function (err, result, fields) {
+				con.release();
+	
+				res.redirect("/driver");
+				return;
+			});
+		});
+	}
+})
 
 app.get("/addnews", (req, res) => {
 	loadDefaultValues(req);
