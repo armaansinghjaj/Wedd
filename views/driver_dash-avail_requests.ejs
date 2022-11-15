@@ -7,7 +7,7 @@
     <title>Wedd | New Rides</title>
 </head>
 <body>
-    <% if (!(typeof rides === 'undefined')) { %>
+    <% if (rides.length > 0) { %>
         <table>
             <tr>
                 <th>Request ID</th>
@@ -25,18 +25,18 @@
                     <td><%=ride.name%></td>
                     <td><%=ride.email%></td>
                     <td><%=ride.phone%></td>
-                    <td><%=ride.pickup_address%></td>
-                    <td><%=ride.destination%></td>
+                    <td><%=ride.pick_address%></td>
+                    <td><%=ride.dest_address%></td>
                     <td>
-                        <form action='/rides' method='post'>
-                            <input type='submit' value='accept' name='accept'>
+                        <form action='/driver?daction=racc&did1=4&did2=5&dcid=1&cid=2&pic=1233Abc&drp=12333cba&dst=17.6&etd=30&ect=46.89' method='POST'>
+                            <input type='submit' value='Accept' name='accept'>
                             <input type='hidden' name='selected' value='<%=ride.request_id%>'>
                             <input type='hidden' name='action' value='accept'>
                         </form>
                     </td>
                     <td>
-                        <form action='/rides' method='post'>
-                            <input type='submit' value='decline' name='decline'>
+                        <form action='/driver?daction=rdec&did1=4&did2=5&cid=1' method='POST'>
+                            <input type='submit' value='Decline' name='decline'>
                             <input type='hidden' name='selected' value='<%=ride.request_id%>'>
                             <input type='hidden' name='action'value='decline'>
                         </form>
@@ -48,7 +48,23 @@
         <p>No requests to show</p>
         <p>Searching for requests...</p>
     <% } %>
+
+    <button class="end_shift">End shift</button> <br>
+    <div class="end_form_container" style="display: none;">
+        <p>Are you sure you want to end your shift?</p>
+        <form action="/driver?daction=end" method="POST">
+            <input type="submit" value="Confirm">
+        </form>
+    </div>
 </body>
-</html>
-</body>
+<script>
+    document.getElementsByClassName("end_shift")[0].addEventListener('click', ()=>{
+        if(document.getElementsByClassName("end_form_container")[0].style.display == "block"){
+            document.getElementsByClassName("end_form_container")[0].style.display = "none";
+        }
+        else{
+            document.getElementsByClassName("end_form_container")[0].style.display = "block";
+        }
+    })
+</script>
 </html>

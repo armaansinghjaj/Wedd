@@ -18,13 +18,6 @@
             <input type="submit" value="Confirm" name="shift_start"> <br> <br>
         </form>
     </div> <br>
-    <button class="end_shift">End shift</button> <br>
-    <div class="end_form_container" style="display: none;">
-        <p>Are you sure you want to end your shift?</p>
-        <form action="/driver?daction=end" method="POST">
-            <input type="submit" value="Confirm">
-        </form>
-    </div>
 </div>
 </body>
 <script>
@@ -34,14 +27,6 @@
         }
         else{
             document.getElementsByClassName("start_form_container")[0].style.display = "block";
-        }
-    })
-    document.getElementsByClassName("end_shift")[0].addEventListener('click', ()=>{
-        if(document.getElementsByClassName("end_form_container")[0].style.display == "block"){
-            document.getElementsByClassName("end_form_container")[0].style.display = "none";
-        }
-        else{
-            document.getElementsByClassName("end_form_container")[0].style.display = "block";
         }
     })
 </script>

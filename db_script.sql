@@ -138,12 +138,11 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`driver_car` (
 -- -----------------------------------------------------
 -- Table `wedddb`.`active_driver`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wedddb`.`active_driver` (
-  `active_drive_session_id` VARCHAR(16) NOT NULL,
+CREATE TABLE IF NOT EXISTS `wedddb`.`available_drivers` (
+  `active_driver_session_id` VARCHAR(16) NOT NULL,
   `driver_1_id` INT(10) NOT NULL,
   `driver_2_id` INT(10),
   `car_id` INT(10) NOT NULL,
-  `start_time` DATE NOT NULL,
   INDEX `fk_driver_1_idx` (`driver_1_id` ASC),
   CONSTRAINT `fk_driver_1_id`
     FOREIGN KEY (`driver_1_id`)
@@ -162,17 +161,31 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`active_driver` (
 -- Table `wedddb`.`current_rides`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`current_rides` (
+  `ride_allocated_session_id` VARCHAR(16) NOT NULL,
+  `ride_id` INT(10) NOT NULL AUTO_INCREMENT, -- driver 1 drives customer car
   `driver_1_id` INT(10) NOT NULL, -- driver 1 drives customer car
+  `driver_2_id` INT(10), -- driver 2 drives customer car
+  `car_id` INT(10) NOT NULL,
   `customer_id` INT(10) NOT NULL,
   `pickup_location` VARCHAR(255) NOT NULL, -- latitude;longitude
   `drop_location` VARCHAR(255) NOT NULL, -- latitude;longitude
   `distance` DECIMAL(10,2) NOT NULL,
-  `time` INT(20) NOT NULL, -- speed from API to calculate time using distance
-  `price` DECIMAL(10,2) NOT NULL,
-  INDEX `fk_driver_id_idx` (`driver_1_id` ASC),
-  CONSTRAINT `fk_driver_id`
+  `est_time` INT(20) NOT NULL, -- speed from API to calculate time using distance
+  `est_cost` DECIMAL(10,2) NOT NULL,
+  `start_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ride_id`),
+  INDEX `fk_driver_1_id_idx` (`driver_1_id` ASC),
+  CONSTRAINT `fk_driver_1_cr_id`
     FOREIGN KEY (`driver_1_id`)
-    REFERENCES `wedddb`.`active_driver` (`driver_1_id`),
+    REFERENCES `wedddb`.`employees` (`employee_id`),
+  INDEX `fk_driver_2_id_idx` (`driver_2_id` ASC),
+  CONSTRAINT `fk_driver_2_cr_id`
+    FOREIGN KEY (`driver_2_id`)
+    REFERENCES `wedddb`.`employees` (`employee_id`),
+  INDEX `fk_d_cr_car_idx` (`car_id` ASC),
+  CONSTRAINT `fk_d_cr_car_id`
+    FOREIGN KEY (`car_id`)
+    REFERENCES `wedddb`.`driver_car` (`driver_car_id`),
   INDEX `fk_customer_idx` (`customer_id` ASC),
   CONSTRAINT `fk_customer_id`
     FOREIGN KEY (`customer_id`)
@@ -236,12 +249,12 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`requests` (
 -- Table `wedddb`.`requests`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`rideRequests` (
-  `request_id` INT(10) NOT NULL AUTO_INCREMENT,
+  `request_id` INT(16) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
-  `phone` VARCHAR(255) NOT NULL,
-  `pickup_address` VARCHAR(500) NOT NULL,
-  `destination` VARCHAR(500) NOT NULL,
+  `phone` INT(20) NOT NULL,
+  `pick_address` VARCHAR(500) NOT NULL,
+  `dest_address` VARCHAR(500) NOT NULL,
   PRIMARY KEY (`request_id`)
 );
 
@@ -278,11 +291,14 @@ INSERT INTO background
 VALUES ("image/homepage.jpg","image/aboutpage.jpg","image/contactpage.jpg","image/newspage.png");
 
 INSERT INTO customer (customer_id, email, name, password)
-VALUES(NULL,'armaan@gmail.com','armaan singh','munni');
+VALUES(NULL,'armaan@gmail.com','armaan singh','password');
 INSERT INTO customer (customer_id, email, name, password)
-VALUES(NULL,'prince@gmail.com','prince agam','basanti');
+VALUES(NULL,'prince@gmail.com','prince agam','password');
 INSERT INTO customer (customer_id, email, name, password)
-VALUES(NULL,'daniel@gmail.com','daniel wong','daniel');
+VALUES(NULL,'daniel@gmail.com','daniel wong','password');
 
 INSERT INTO driver_car (driver_car_id, manufacturer, model, model_number, year, color, car_type, licence_plate)
 VALUES(NULL,'Honda', 'Civic', 'hcx-186bh', 2016, 'Pale yellow', 'A', 'CAR-2016');
+
+INSERT INTO rideRequests VALUES ('1', 'First', '1@gmail.com', 1111111111, '1233', '12333');
+INSERT INTO rideRequests VALUES ('2', 'Second', '2@gmail.com', 1111111111, '1233', '12333');

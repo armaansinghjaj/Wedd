@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drive | Wedd</title>
+</head>
+<body>
+    <h2>Welcome Mr. <%= driver %></h2>
+    <p>Your ride</p>
+    <table>
+        <tr>
+            <th>FROM</th>
+            <th>TO</th>
+        </tr>
+        <tr>
+            <td><%= pickup_address %> </td>
+            <td><%= drop_address %> </td>
+        </tr>
+    </table>
+    <div class="starter">
+        <p>Slide to drive</p>
+        <p><input type="range" value="0" class="pullee"/></p>
+    </div>
+    <div class="map">
+        <span id="map_section">MAP HERE</span>
+        <div id="buttons">
+            <form action="/driver" method="POST">
+                <input type="submit" value="Complete Ride">
+            </form>
+            <form action="/driver" method="POST">
+                <input type="submit" value="Cancel Ride">
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+
+    window.onload = () => {document.getElementsByClassName('map')[0].style.display = "none";}    
+
+    var inputRange = document.getElementsByClassName('pullee')[0],
+    maxValue = 150,
+    speed = 12
+
+    // set min/max value
+    inputRange.min = 0;
+    inputRange.max = maxValue;
+
+    document.getElementsByClassName('pullee')[0].addEventListener('mouseup', ()=>{
+        if(inputRange.value >= maxValue){
+            alert('Setting up route. Please wear your seat belt!');
+            document.getElementsByClassName('map')[0].style.display = "block";
+            document.getElementsByClassName('starter')[0].style.display = "none";
+        }
+    })
+</script>
+</html>
