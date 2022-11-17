@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`customer` (
   `email` VARCHAR(40) NOT NULL,
   `name` VARCHAR(50) NOT NULL,
   `password` VARCHAR(20) NOT NULL,
+  `home_address` VARCHAR(100),
+  `customer_car` VARCHAR(100),
   `reset_password_uuid` VARCHAR(50),
   `register_account_uuid` VARCHAR(50),
   `authentication_uuid` VARCHAR(50),
@@ -54,28 +56,6 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`customer` (
     FOREIGN KEY (`role`)
     REFERENCES `wedddb`.`user_roles` (`role_id`)
 );
-
-
--- -----------------------------------------------------
--- Table `wedddb`.`driver`
--- -----------------------------------------------------
-/* CREATE TABLE IF NOT EXISTS `wedddb`.`driver` (
-  `driver_id` INT(10) NOT NULL AUTO_INCREMENT,
-  `driver_pp` VARCHAR(255),
-  `email` VARCHAR(40) NOT NULL,
-  `name` VARCHAR(50) NOT NULL,
-  `password` VARCHAR(20) NOT NULL,
-  `reset_password_uuid` VARCHAR(50),
-  `register_account_uuid` VARCHAR(50),
-  `authentication_uuid` VARCHAR(50),
-  `tracking_uuid` VARCHAR(50),
-  `role` INT(2) NOT NULL DEFAULT 2,
-  PRIMARY KEY (`driver_id`),
-  INDEX `fk_d_role` (`role` ASC),
-  CONSTRAINT `fk_d_role`
-    FOREIGN KEY (`role`)
-    REFERENCES `wedddb`.`user_roles` (`role_id`)
-); */
 
 -- -----------------------------------------------------
 -- Table `wedddb`.`employees`
@@ -113,27 +93,6 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`driver_car` (
   PRIMARY KEY (`driver_car_id`),
   CONSTRAINT CHK_Type CHECK (car_type IN ('A', 'M')) -- Automatic or manual
 );
-
-
--- -----------------------------------------------------
--- Table `wedddb`.`admin`
--- -----------------------------------------------------
-/* CREATE TABLE IF NOT EXISTS `wedddb`.`admin` (
-  `admin_id` INT(10) NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(40) NOT NULL,
-  `name` VARCHAR(50) NOT NULL,
-  `password` VARCHAR(20) NOT NULL,
-  `reset_password_uuid` VARCHAR(50),
-  `register_account_uuid` VARCHAR(50),
-  `authentication_uuid` VARCHAR(50),
-  `role` INT(2) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`admin_id`),
-  INDEX `fk_a_role` (`role` ASC),
-  CONSTRAINT `fk_a_role`
-    FOREIGN KEY (`role`)
-    REFERENCES `wedddb`.`user_roles` (`role_id`)
-); */
-
 
 -- -----------------------------------------------------
 -- Table `wedddb`.`active_driver`
@@ -246,16 +205,27 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`requests` (
 );
 
 -- -----------------------------------------------------
--- Table `wedddb`.`requests`
+-- Table `wedddb`.`rideRequests`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wedddb`.`rideRequests` (
   `request_id` INT(16) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
   `phone` INT(20) NOT NULL,
-  `pick_address` VARCHAR(500) NOT NULL,
-  `dest_address` VARCHAR(500) NOT NULL,
+  `pickup` VARCHAR(500) NOT NULL,
+  `destination` VARCHAR(500) NOT NULL,
+  `payment` VARCHAR(500) NOT NULL,
   PRIMARY KEY (`request_id`)
+);
+
+-- -----------------------------------------------------
+-- Table `wedddb`.`supportRequests`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wedddb`.`supportRequests` (
+  `email` VARCHAR(50) NOT NULL,
+  `reason` VARCHAR(20) NOT NULL,
+  `description` VARCHAR(30) NOT NULL,
+  `comments` VARCHAR(500)
 );
 
 INSERT INTO services (service_id, service_name)
@@ -300,5 +270,5 @@ VALUES(NULL,'daniel@gmail.com','daniel wong','password');
 INSERT INTO driver_car (driver_car_id, manufacturer, model, model_number, year, color, car_type, licence_plate)
 VALUES(NULL,'Honda', 'Civic', 'hcx-186bh', 2016, 'Pale yellow', 'A', 'CAR-2016');
 
-INSERT INTO rideRequests VALUES ('1', 'First', '1@gmail.com', 1111111111, '1233', '12333');
-INSERT INTO rideRequests VALUES ('2', 'Second', '2@gmail.com', 1111111111, '1233', '12333');
+INSERT INTO rideRequests VALUES (1, 'First', '1@gmail.com', 1111111111, '1233', '12333', 'CASH');
+INSERT INTO rideRequests VALUES (2, 'Second', '2@gmail.com', 1111111111, '1233', '12333', 'DEBIT');

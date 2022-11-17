@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .customer_pp{
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+        }
+        :is(.customer_pp, .fa-pencil):hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h3>Hey, <u><%= customer_account.name %></u></h3>
+    <ul>
+        <li><a href="/ride">Ride now</a></li>
+        <li><a href="/profile/support">Support</a></li>
+        <li><a href="/profile/account">Account settings</a></li>
+    </ul>
+
+    <% if(page === "support") {%>
+        <%- include("profile-customer-support") -%>
+    <% } else if(page === "account"){%>
+        <%- include("profile-customer-account") -%>
+    <% } %>
+</body>
+<script>
+    if(document.getElementById("profile_picture_pencil")){
+        document.getElementById("profile_picture_pencil").addEventListener("click", ()=>{
+            let item = document.getElementsByClassName("picture_change_item")[0];
+
+            if(item.style.display === "none"){
+                item.style.display = "block";
+            }
+            else{
+                item.style.display = "none";
+            }
+        })
+    }
+    if(document.getElementsByClassName("delete_account_btn")[0]){
+        document.getElementsByClassName("delete_account_btn")[0].addEventListener("click", ()=>{
+            let item = document.getElementsByClassName("delete_confirmation")[0];
+
+            if(item.style.display === "none"){
+                item.style.display = "block";
+            }
+            else{
+                item.style.display = "none";
+            }
+        })
+    }
+    if(document.getElementsByClassName("delete_account_btn")[1]){
+        document.getElementsByClassName("delete_account_btn")[1].addEventListener("click", ()=>{
+            let item = document.getElementsByClassName("delete_confirmation")[0];
+
+            if(item.style.display === "none"){
+                item.style.display = "block";
+            }
+            else{
+                item.style.display = "none";
+            }
+        })
+    }
+    if(document.getElementById("support_submit")){
+        document.getElementById("support_submit").addEventListener("click", ()=>{
+            document.getElementById("textarea").value = document.getElementById("textarea").value.replace(/\n/g, " ").replace(/'/g, '').replace(/"/g, '');
+            document.getElementById("brief_description").value = document.getElementById("brief_description").value.replace(/\n/g, " ").replace(/'/g, '').replace(/"/g, '');
+            document.getElementById("support_form").action = "/profile/support";
+            document.getElementById("support_form").submit();
+        })
+    }
+</script>
+</html>

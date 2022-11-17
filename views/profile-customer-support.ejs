@@ -1,0 +1,20 @@
+<h4>Get in touch</h4>
+<hr>
+<form id="support_form" method="post">
+    <label>User email:</label>*
+    <input type="email" name="customer_email" id="customer_email" value="<%= customer_account.email %>"> <br><br>
+    <label>How can we help you?</label>* <br>
+    <select name="problem[reason]">
+        <option value="">--SELECT REASON--</option>
+        <option value="book_ride">I'm facing problems with booking ride</option>
+        <option value="account">I'm facing problems with my account</option>
+        <option value="service_contact">I'm facing problems with contacting you for services</option>
+    </select> <br><br>
+
+    <label>Briefly describe your problems in one or two lines.</label>* <br>
+    <input type="text" id="brief_description" name="problem[brief_description]" placeholder="The form on the homepage...">
+    <br><br>
+    <label>Do you have any additional comments over the issue so that we can assist you better?</label> <br>
+    <textarea id="textarea" rows="8" cols="50" name="problem[comments]" placeholder="Comments..."></textarea><br><br>
+    <button id="support_submit">Contact</button>
+</form>

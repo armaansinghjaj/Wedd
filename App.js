@@ -9,6 +9,7 @@ const multer = require("multer");
 let alert = require("alert");
 const crypto = require("crypto");
 
+// for storing application backgrounds
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, __dirname + "\\public\\image");
@@ -25,7 +26,31 @@ const storage = multer.diskStorage({
 		cb(null, new_name);
 	},
 });
-const upload = multer({storage: storage});
+const upload_background = multer({storage: storage});
+
+const profile_picture_storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, __dirname + "\\public\\profile_pictures");
+	},
+	filename: (req, file, cb) => {
+
+		const unique_hex = crypto.randomBytes(4).toString("hex");
+		let new_name = unique_hex + file.originalname;
+
+		try {
+			fs.writeFileSync(__dirname+`\\server-side files\\temporary text files\\profile picture temporary data\\${req.session.user}.txt`, new_name);
+		} catch (err) {
+			console.error(err);
+		}
+
+		cb(null, new_name);
+	},
+});
+const upload_profile_picture = multer({storage: profile_picture_storage});
+
+const readFile = filename =>
+   fs.readFileSync(filename)
+   .toString('UTF8');
 
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
@@ -68,8 +93,8 @@ function loadDefaultValues(req) {
 	req.session.edit_role_id = null;
 	req.session.edit_title = null;
 	if (!(req.session.access)) {
-		req.session.access = 3; 
-		req.session.user = "test";
+		req.session.access = 1; 
+		req.session.user = "armaan@gmail.com";
 	}
 	
 }
@@ -94,34 +119,180 @@ app.get("/", (req, res) => {
 	});
 });
 
+app.get("/profile", (req, res)=>{
+	loadDefaultValues(req);
+	let sess = req.session;
+
+	pool.getConnection((err, con) => {
+		if (err) throw err;
+		con.query(`SELECT * FROM customer where email = '${sess.user}'`, function (err, account, fields) {
+			con.release();
+
+			return res.render("profile-customer", {customer_account: account[0], page: null});
+		});
+	});
+})
+app.get("/profile/account", (req, res)=>{
+	loadDefaultValues(req);
+	let sess = req.session;
+
+	pool.getConnection((err, con) => {
+		if (err) throw err;
+		con.query(`SELECT * FROM customer where email = '${sess.user}'`, function (err, account, fields) {
+			con.release();
+
+			return res.render("profile-customer", {customer_account: account[0], page: "account"});
+		});
+	});
+})
+app.get("/profile/support", (req, res)=>{
+	loadDefaultValues(req);
+	let sess = req.session;
+
+	pool.getConnection((err, con) => {
+		if (err) throw err;
+		con.query(`SELECT * FROM customer where email = '${sess.user}'`, function (err, account, fields) {
+			con.release();
+
+			return res.render("profile-customer", {customer_account: account[0], page: "support"});
+		});
+	});
+})
+
+app.post("/profile/account", upload_profile_picture.single("image"), (req, res)=>{
+	loadDefaultValues(req);
+	let sess = req.session;
+
+	if(req.query.option === "details"){
+		pool.getConnection((err, con) => {
+			if (err) throw err;
+			con.query(`UPDATE customer SET customer_pp = '', name = '${req.body.customer_name}', email = '${req.body.customer_email}', home_address = '${req.body.home_address}', customer_car = '${req.body.customer_car}' where email = '${sess.user}'`, function (err, result, fields) {
+				con.release();
+				if(err) throw err;
+	
+				return res.redirect("/profile/account");
+			});
+		});
+	}
+	else if(req.query.option === "password"){
+		pool.getConnection((err, con) => {
+			if (err) throw err;
+			con.query(`SELECT password FROM customer where email = '${sess.user}'`, function (err, user_password, fields) {
+				con.release();
+	
+				if(req.body.customer_password.old === user_password[0].password){
+					if(req.body.customer_password.new === req.body.customer_password.confirm){
+						pool.getConnection((err, con) => {
+							if (err) throw err;
+							con.query(`UPDATE customer SET password = '${req.body.customer.new_password}' where email = '${sess.user}'`, function (err, result, fields) {
+								con.release();
+								if(err) throw err;
+					
+								return res.redirect("/profile/account");
+							});
+						});
+					}
+					else{
+						res.send("Values didn't matched!")
+					}
+				}
+				else{
+					res.send("Values didn't matched!")
+				}
+			});
+		});
+	}
+	else if(req.query.option === "profilepicture"){
+
+		let imageName = "/profile_pictures/"+readFile(__dirname+`\\server-side files\\temporary text files\\profile picture temporary data\\${sess.user}.txt`);
+
+		pool.getConnection((err, con) => {
+			if (err) throw err;
+			con.query(`SELECT customer_pp FROM customer where email = '${sess.user}'`, function (err, profile_picture_data, fields) {
+				con.release();
+				if (err) throw err;
+				else if(profile_picture_data[0].customer_pp != null) {
+					let full_path = __dirname + "/public/" + profile_picture_data[0].customer_pp;
+					try{
+						fs.unlinkSync(full_path);
+					}
+					catch (exception){}
+				}
+			});
+		});
+
+		pool.getConnection((err, con) => {
+			if (err) throw err;
+			con.query(`UPDATE customer SET customer_pp = '${imageName}' where email = '${sess.user}'`, function (err, result, fields) {
+				con.release();
+				if(err) throw err;
+
+				fs.unlinkSync(__dirname+`\\server-side files\\temporary text files\\profile picture temporary data\\${sess.user}.txt`);
+				return res.redirect("/profile/account");
+			});
+		});
+	}
+	else if(req.query.option === "delete"){
+		pool.getConnection((err, con) => {
+			if (err) throw err;
+			con.query(`DELETE FROM customer where email = '${sess.user}'`, function (err, result, fields) {
+				con.release();
+				if(err) throw err;
+				
+				return res.redirect("/");
+			});
+		});
+	}
+})
+app.post("/profile/support", (req, res)=>{
+	pool.getConnection((err, con) => {
+		if (err) throw err;
+		con.query(`INSERT INTO supportRequests (email, reason, description, comments) VALUES ('${req.body.customer_email}', '${req.body.problem.reason}', '${req.body.problem.brief_description}', '${req.body.problem.comments}')`, function (err, result, fields) {
+			con.release();
+			if (err) throw err;
+
+			return res.redirect("/profile");
+		});
+	});
+})
+
 app.get("/ride", (req, res) => {
 	loadDefaultValues(req);
-
-	res.render("ride", {year: new Date().getFullYear(), title: "Ride"});
+	let sess = req.session;
+	if (sess.access != 1) {
+		return res.redirect("/login");
+	}
+	return res.render("ride");
 });
-
 app.post("/ride", (req, res) => {
 	let sess = req.session;
-	if (sess.access < 1) {
+	if (sess.access != 1) {
 		res.redirect("login");
-	} else {
+	}
+	else {
 		let name = req.body.name;
 		let email = req.body.email;
 		let phone = req.body.phone;
 		let pick = req.body.pick;
 		let destination = req.body.destination;
+		let schedule = req.body.schedule_trip;
+		let mode_of_payement = req.body.pay_mode;
 
-		if (name === "" || email === "" || phone === "" || pick === "" || destination === "") {
+		if (name === "" || isNaN(name) || email === "" || isNaN(email) || phone === "" || isNaN(phone) || pick === "" || isNaN(pick) || destination === "" || isNaN(destination) || mode_of_payement === undefined) {
 			res.send("error");
 			return;
 		}
+		else{
+			if(schedule === ""){
+				pool.getConnection((err, con) => {
+					if (err) throw err;
+					con.query(`INSERT INTO rideRequests (name, email, phone, pickup, destination, payment) VALUES ('${name}','${email}','${phone}','${pick}','${destination}', '${mode_of_payement}') `, function (err, result, fields) {
+						con.release();
 
-		pool.getConnection((err, con) => {
-			if (err) throw err;
-			con.query(`INSERT INTO rideRequests (request_id,name,email,phone,pickup_address,destination) VALUES (0,'${name}','${email}','${phone}','${pick}','${destination}') `, function (err, result, fields) {
-				con.release();
-			});
-		});
+					});
+				});
+			}
+		}
 
 		res.redirect("/ride");
 	}
@@ -205,7 +376,7 @@ app.get("/roles", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
 	
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 	}
 	else{
@@ -224,8 +395,8 @@ app.get("/roles", (req, res) => {
 app.get("/login", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
-	if (sess.access>0){
-		res.redirect("/myaccount");
+	if (sess.access){
+		res.redirect("/profile");
 	}
 	else{
 		res.render("login", {year: new Date().getFullYear(), title: "Login"});
@@ -235,8 +406,8 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
-	if (sess.access>0){
-		res.redirect("/myaccount");
+	if (sess.access){
+		res.redirect("/profile");
 	}
 	else if (req.body.email === "" || req.body.password === "") {
 		res.send("error");
@@ -285,18 +456,18 @@ app.get("/signup", (req, res) => {
 	loadDefaultValues(req);
 
 	let sess = req.session;
-	if (sess.access>0){
-		res.redirect("/myaccount");
+	if (sess.access){
+		return res.redirect("/profile");
 	}
 
-	res.render("signup", {year: new Date().getFullYear(), title: "Signup"});
+	return res.render("signup", {year: new Date().getFullYear(), title: "Signup"});
 });
 app.post("/signup", (req, res) => {
 	loadDefaultValues(req);
 	
 	let sess = req.session;
-	if (sess.access>0){
-		res.redirect("/myaccount");
+	if (sess.access){
+		res.redirect("/profile");
 		return;
 	}
 	if (req.body.email === "" || req.body.name === "" || req.body.password === "") {
@@ -320,7 +491,7 @@ app.get("/admin", (req, res) => {
 	loadDefaultValues(req);
 	
 	let sess = req.session;
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -333,6 +504,11 @@ app.get("/driver", (req, res)=>{
 	loadDefaultValues(req);
 
 	let sess = req.session;
+
+	if (sess.access != 2) {
+		return res.redirect("/");
+	}
+
 	let result = {
 		rides: undefined
 	};
@@ -370,6 +546,10 @@ app.get("/driver", (req, res)=>{
 app.post("/driver", (req, res)=>{
 
 	let sess = req.session;
+
+	if (sess.access != 2) {
+		return res.redirect("/");
+	}
 
 	if(req.query.daction === 'startdata'){
 		pool.getConnection((err, con) => {
@@ -448,7 +628,7 @@ app.get("/addnews", (req, res) => {
 	loadDefaultValues(req);
 	
 	let sess = req.session;
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -478,7 +658,7 @@ app.get("/drivers", (req, res) => {
 	
 	let sess = req.session;
 
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -497,7 +677,7 @@ app.get("/drivers", (req, res) => {
 app.post("/drivers", (req, res) => {
 	let sess = req.session;
 	
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -564,7 +744,7 @@ app.get("/admins", (req, res) => {
 	
 	let sess = req.session;
 
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -583,7 +763,7 @@ app.get("/admins", (req, res) => {
 app.post("/admins", (req, res) => {
 	let sess = req.session;
 	
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -650,7 +830,7 @@ app.get("/rides", (req, res) => {
 	
 	let sess = req.session;
 	
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -668,7 +848,7 @@ app.get("/requests", (req, res) => {
 	
 	let sess = req.session;
 	
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -687,7 +867,7 @@ app.get("/background", (req, res) => {
 	
 	let sess = req.session;
 	
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}
@@ -738,10 +918,10 @@ app.get("/background", (req, res) => {
 		res.render("background");
 	}
 });
-app.post("/background", upload.single("image"), (req, res) => {
+app.post("/background", upload_background.single("image"), (req, res) => {
 	let sess = req.session;
 	
-	if (sess.access < 3){
+	if (sess.access != 3){
 		res.redirect("/");
 		return;
 	}

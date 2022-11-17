@@ -1,0 +1,43 @@
+<h3>Change profile picture</h3>
+<hr>
+<div class="profile_picture_section">
+    <ul>
+        <li><p><img class="customer_pp" src="<%= customer_account.customer_pp %>"><i id="profile_picture_pencil" class="fa fa-pencil" aria-hidden="true"></i></p></li>
+        <li class="picture_change_item" style="display: none;">
+            <form action="/profile/account?option=profilepicture" method="post" enctype="multipart/form-data">
+                <input type="file" accept="image/x-png,image/gif,image/jpeg,image/jpg" name="image"> <br>
+                <input type="submit" value="Update profile picture">
+            </form>
+        </li>
+    </ul>
+</div>
+<h3>Change profile</h3>
+<hr>
+<form action="/profile/account?option=details" method="post">
+    <ul>
+        <li>Your name: <input type="text" name="customer_name" id="customer_name" value="<%= customer_account.name %>"></li>
+        <li>Your email: <input type="email" name="customer_email" id="customer_email" value="<%= customer_account.email %>"></li>
+        <li>Your home address: <input type="text" name="home_address" id="home_address" value="<%= customer_account.home_address %>"></li>
+        <li>Your car: <input type="text" name="customer_car" id="customer_car" value="<%= customer_account.customer_car %>"></li>
+        <input type="submit" value="Update account">
+    </ul>
+</form>
+<h3>Change password</h3>
+<hr>
+<form action="/profile/account?option=password" method="post">
+    <ul>
+        <li>Old password: <input type="password" name="customer_password[old]" id="old_password" value=""></li>
+        <li>New password: <input type="password" name="customer_password[new]" id="new_password_field" value=""></li>
+        <li>Confirm password: <input type="password" name="customer_password[confirm]" id="confirm_password" value=""></li>
+        <input type="submit" value="Update password">
+    </ul>
+</form>
+<h3>Delete account</h3>
+<hr>
+<Button class="delete_account_btn">Delete account</Button>
+<form action="/profile/account?option=delete" method="post">
+    <div class="delete_confirmation" style="display: none;">
+        <p>Once you delete your account, there is no going back. Please be certain.</p>
+        <input type="submit" value="Confirm"> <input type="reset" class="delete_account_btn" value="Cancel">
+    </div>
+</form>

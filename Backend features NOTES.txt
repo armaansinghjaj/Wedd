@@ -1,0 +1,13 @@
+NOTES:
+    Armaan:
+    1. Add the feature in the (customer) account page where user can add their default car and home address. With the default car, if the customer adds, system will create a row in the customer_car table and with that car ID, system will add the car to customer's table. If customer doesn't add default, when ever the customer books a ride, the new car will be added to the customer_car table (TEMPORARILY) and then to customer table to link both, but after ride both rows will be deleted.
+
+    2. Ride form should handle the inputs of customer car and car type (automatic and manual).
+
+    3. https://www.indusface.com/blog/how-to-protect-your-web-apps-using-anti-csrf-tokens/#:~:text=Anti%2DCSRF%20tokens%20are%20related,guessable%20by%20a%20third%20party.
+
+    4. https://owasp.org/www-pdf-archive/How_to_Build_a_Secure_Login_BenBroussard_June2011.pdf
+
+    5. https://programmingfields.com/encrypt-form-data-in-javascript-using-crypto-js-before-submit/#Encrypt_Form_Data_in_JavaScript
+
+    
