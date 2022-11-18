@@ -9,6 +9,7 @@ const multer = require("multer");
 let alert = require("alert");
 const crypto = require("crypto");
 
+
 // for storing application backgrounds
 const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -33,12 +34,11 @@ const profile_picture_storage = multer.diskStorage({
 		cb(null, __dirname + "\\public\\profile_pictures");
 	},
 	filename: (req, file, cb) => {
-
 		const unique_hex = crypto.randomBytes(4).toString("hex");
 		let new_name = unique_hex + file.originalname;
 
 		try {
-			fs.writeFileSync(__dirname+`\\server-side files\\temporary text files\\profile picture temporary data\\${req.session.user}.txt`, new_name);
+			fs.writeFileSync(__dirname + `\\server-side files\\temporary text files\\profile picture temporary data\\${req.session.user}.txt`, new_name);
 		} catch (err) {
 			console.error(err);
 		}
@@ -48,13 +48,12 @@ const profile_picture_storage = multer.diskStorage({
 });
 const upload_profile_picture = multer({storage: profile_picture_storage});
 
-const readFile = filename =>
-   fs.readFileSync(filename)
-   .toString('UTF8');
+const readFile = (filename) => fs.readFileSync(filename).toString("UTF8");
 
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const session = require("express-session");
+const { response } = require("express");
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -77,12 +76,12 @@ app.use(cookieParser());
 
 // create database connection
 var pool = mysql.createPool({
-  connectionLimit: 100,
-  host: "localhost",
-  port: 3307,
-  user: "root",
-  password: "password",
-  database: "wedddb",
+	connectionLimit: 100,
+	host: "localhost",
+	port: 3306,
+	user: "root",
+	password: "password",
+	database: "wedddb",
 });
 
 function loadDefaultValues(req) {
@@ -92,11 +91,21 @@ function loadDefaultValues(req) {
 	req.session.edit_email = null;
 	req.session.edit_role_id = null;
 	req.session.edit_title = null;
-	if (!(req.session.access)) {
-		req.session.access = 1; 
+	if (!req.session.access) {
+		req.session.access = 1;
 		req.session.user = "armaan@gmail.com";
 	}
-	
+}
+
+function setPickupLocation(req,values) {
+	req.session.startlat = values[0].lat,
+	req.session.startlng = values[0].lon
+
+}
+function setDropLocation(req, values) {
+	req.session.endlat = values[0].lat,
+	req.session.endlng = values[0].lon
+
 }
 
 // --------------------------------- routes ---------------------------------------
@@ -104,7 +113,7 @@ function loadDefaultValues(req) {
 // default route
 app.get("/", (req, res) => {
 	loadDefaultValues(req);
-	let sess = req.session
+	let sess = req.session;
 	pool.getConnection((err, con) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM background`, function (err, result, fields) {
@@ -113,13 +122,13 @@ app.get("/", (req, res) => {
 				year: new Date().getFullYear(),
 				title: "Homepage",
 				image: result[0].home_page,
-				user: sess.user
+				user: sess.user,
 			});
 		});
 	});
 });
 
-app.get("/profile", (req, res)=>{
+app.get("/profile", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
 
@@ -131,8 +140,8 @@ app.get("/profile", (req, res)=>{
 			return res.render("profile-customer", {customer_account: account[0], page: null});
 		});
 	});
-})
-app.get("/profile/account", (req, res)=>{
+});
+app.get("/profile/account", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
 
@@ -144,8 +153,8 @@ app.get("/profile/account", (req, res)=>{
 			return res.render("profile-customer", {customer_account: account[0], page: "account"});
 		});
 	});
-})
-app.get("/profile/support", (req, res)=>{
+});
+app.get("/profile/support", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
 
@@ -157,66 +166,60 @@ app.get("/profile/support", (req, res)=>{
 			return res.render("profile-customer", {customer_account: account[0], page: "support"});
 		});
 	});
-})
+});
 
-app.post("/profile/account", upload_profile_picture.single("image"), (req, res)=>{
+app.post("/profile/account", upload_profile_picture.single("image"), (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
 
-	if(req.query.option === "details"){
+	if (req.query.option === "details") {
 		pool.getConnection((err, con) => {
 			if (err) throw err;
 			con.query(`UPDATE customer SET customer_pp = '', name = '${req.body.customer_name}', email = '${req.body.customer_email}', home_address = '${req.body.home_address}', customer_car = '${req.body.customer_car}' where email = '${sess.user}'`, function (err, result, fields) {
 				con.release();
-				if(err) throw err;
-	
+				if (err) throw err;
+
 				return res.redirect("/profile/account");
 			});
 		});
-	}
-	else if(req.query.option === "password"){
+	} else if (req.query.option === "password") {
 		pool.getConnection((err, con) => {
 			if (err) throw err;
 			con.query(`SELECT password FROM customer where email = '${sess.user}'`, function (err, user_password, fields) {
 				con.release();
-	
-				if(req.body.customer_password.old === user_password[0].password){
-					if(req.body.customer_password.new === req.body.customer_password.confirm){
+
+				if (req.body.customer_password.old === user_password[0].password) {
+					if (req.body.customer_password.new === req.body.customer_password.confirm) {
 						pool.getConnection((err, con) => {
 							if (err) throw err;
 							con.query(`UPDATE customer SET password = '${req.body.customer.new_password}' where email = '${sess.user}'`, function (err, result, fields) {
 								con.release();
-								if(err) throw err;
-					
+								if (err) throw err;
+
 								return res.redirect("/profile/account");
 							});
 						});
+					} else {
+						res.send("Values didn't matched!");
 					}
-					else{
-						res.send("Values didn't matched!")
-					}
-				}
-				else{
-					res.send("Values didn't matched!")
+				} else {
+					res.send("Values didn't matched!");
 				}
 			});
 		});
-	}
-	else if(req.query.option === "profilepicture"){
-
-		let imageName = "/profile_pictures/"+readFile(__dirname+`\\server-side files\\temporary text files\\profile picture temporary data\\${sess.user}.txt`);
+	} else if (req.query.option === "profilepicture") {
+		let imageName = "/profile_pictures/" + readFile(__dirname + `\\server-side files\\temporary text files\\profile picture temporary data\\${sess.user}.txt`);
 
 		pool.getConnection((err, con) => {
 			if (err) throw err;
 			con.query(`SELECT customer_pp FROM customer where email = '${sess.user}'`, function (err, profile_picture_data, fields) {
 				con.release();
 				if (err) throw err;
-				else if(profile_picture_data[0].customer_pp != null) {
+				else if (profile_picture_data[0].customer_pp != null) {
 					let full_path = __dirname + "/public/" + profile_picture_data[0].customer_pp;
-					try{
+					try {
 						fs.unlinkSync(full_path);
-					}
-					catch (exception){}
+					} catch (exception) {}
 				}
 			});
 		});
@@ -225,26 +228,25 @@ app.post("/profile/account", upload_profile_picture.single("image"), (req, res)=
 			if (err) throw err;
 			con.query(`UPDATE customer SET customer_pp = '${imageName}' where email = '${sess.user}'`, function (err, result, fields) {
 				con.release();
-				if(err) throw err;
+				if (err) throw err;
 
-				fs.unlinkSync(__dirname+`\\server-side files\\temporary text files\\profile picture temporary data\\${sess.user}.txt`);
+				fs.unlinkSync(__dirname + `\\server-side files\\temporary text files\\profile picture temporary data\\${sess.user}.txt`);
 				return res.redirect("/profile/account");
 			});
 		});
-	}
-	else if(req.query.option === "delete"){
+	} else if (req.query.option === "delete") {
 		pool.getConnection((err, con) => {
 			if (err) throw err;
 			con.query(`DELETE FROM customer where email = '${sess.user}'`, function (err, result, fields) {
 				con.release();
-				if(err) throw err;
-				
+				if (err) throw err;
+
 				return res.redirect("/");
 			});
 		});
 	}
-})
-app.post("/profile/support", (req, res)=>{
+});
+app.post("/profile/support", (req, res) => {
 	pool.getConnection((err, con) => {
 		if (err) throw err;
 		con.query(`INSERT INTO supportRequests (email, reason, description, comments) VALUES ('${req.body.customer_email}', '${req.body.problem.reason}', '${req.body.problem.brief_description}', '${req.body.problem.comments}')`, function (err, result, fields) {
@@ -254,7 +256,7 @@ app.post("/profile/support", (req, res)=>{
 			return res.redirect("/profile");
 		});
 	});
-})
+});
 
 app.get("/ride", (req, res) => {
 	loadDefaultValues(req);
@@ -268,8 +270,7 @@ app.post("/ride", (req, res) => {
 	let sess = req.session;
 	if (sess.access != 1) {
 		res.redirect("login");
-	}
-	else {
+	} else {
 		let name = req.body.name;
 		let email = req.body.email;
 		let phone = req.body.phone;
@@ -278,23 +279,30 @@ app.post("/ride", (req, res) => {
 		let schedule = req.body.schedule_trip;
 		let mode_of_payement = req.body.pay_mode;
 
-		if (name === "" || isNaN(name) || email === "" || isNaN(email) || phone === "" || isNaN(phone) || pick === "" || isNaN(pick) || destination === "" || isNaN(destination) || mode_of_payement === undefined) {
+		if (name === "" || email === "" || phone === "" || pick === "" || destination === "" || mode_of_payement === undefined) {
 			res.send("error");
 			return;
-		}
-		else{
-			if(schedule === ""){
+		} else {
+			if (schedule === "") {
 				pool.getConnection((err, con) => {
 					if (err) throw err;
 					con.query(`INSERT INTO rideRequests (name, email, phone, pickup, destination, payment) VALUES ('${name}','${email}','${phone}','${pick}','${destination}', '${mode_of_payement}') `, function (err, result, fields) {
 						con.release();
-
 					});
 				});
 			}
 		}
 
-		res.redirect("/ride");
+		let startlat = req.body.startlat;
+		let startlng = req.body.startlng; 
+		let destlat = req.body.destlat;
+		let destlng = req.body.destlng;
+		let h3tags = req.body.h3tags;
+		let distance = h3tags.slice(0,h3tags.indexOf('km'));
+		let time = h3tags.slice(h3tags.indexOf('km')+2,h3tags.indexOf('min'));
+
+		console.log(h3tags,distance,time,'here');
+		res.render("customer_ride_searching",{startlat:startlat,startlng:startlng,destlat:destlat,destlng:destlng} );
 	}
 });
 
@@ -375,11 +383,10 @@ app.get("/news", (req, res) => {
 app.get("/roles", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
-	
-	if (sess.access != 3){
+
+	if (sess.access != 3) {
 		res.redirect("/");
-	}
-	else{
+	} else {
 		pool.getConnection((err, con) => {
 			if (err) throw err;
 			con.query(`SELECT * FROM user_roles`, function (err, result, fields) {
@@ -395,30 +402,25 @@ app.get("/roles", (req, res) => {
 app.get("/login", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
-	if (sess.access){
+	if (sess.access) {
 		res.redirect("/profile");
-	}
-	else{
+	} else {
 		res.render("login", {year: new Date().getFullYear(), title: "Login"});
 	}
-
 });
 app.post("/login", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
-	if (sess.access){
+	if (sess.access) {
 		res.redirect("/profile");
-	}
-	else if (req.body.email === "" || req.body.password === "") {
+	} else if (req.body.email === "" || req.body.password === "") {
 		res.send("error");
-	}
-	else {
+	} else {
 		pool.getConnection((err, con) => {
-			
 			if (err) throw err;
 			con.query(`SELECT email, password, role, name FROM customer WHERE email = '${req.body.email}' union all SELECT email, password, role, name FROM employees WHERE email = '${req.body.email}'`, function (err, result, fields) {
 				con.release();
-				
+
 				if (err) res.send("backend error");
 
 				if (result.length > 0) {
@@ -438,12 +440,10 @@ app.post("/login", (req, res) => {
 							res.redirect("/admin");
 							return;
 						}
-					}
-					else {
+					} else {
 						res.send("invalid password");
 					}
-				}
-				else {
+				} else {
 					res.send("invalid email");
 				}
 			});
@@ -456,7 +456,7 @@ app.get("/signup", (req, res) => {
 	loadDefaultValues(req);
 
 	let sess = req.session;
-	if (sess.access){
+	if (sess.access) {
 		return res.redirect("/profile");
 	}
 
@@ -464,9 +464,9 @@ app.get("/signup", (req, res) => {
 });
 app.post("/signup", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
-	if (sess.access){
+	if (sess.access) {
 		res.redirect("/profile");
 		return;
 	}
@@ -489,9 +489,9 @@ app.post("/signup", (req, res) => {
 
 app.get("/admin", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
-	if (sess.access != 3){
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -500,7 +500,7 @@ app.get("/admin", (req, res) => {
 });
 
 // driver dashboard
-app.get("/driver", (req, res)=>{
+app.get("/driver", (req, res) => {
 	loadDefaultValues(req);
 
 	let sess = req.session;
@@ -510,107 +510,98 @@ app.get("/driver", (req, res)=>{
 	}
 
 	let result = {
-		rides: undefined
+		rides: undefined,
 	};
 
-	if(sess.ride_allocated_session_id){
+	if (sess.ride_allocated_session_id) {
 		return pool.getConnection((err, con) => {
 			if (err) throw err;
 			con.query(`SELECT * FROM current_rides WHERE ride_allocated_session_id = '${sess.ride_allocated_session_id}'`, function (err, result, fields) {
 				con.release();
-				
-				if(err) throw err; // remove on build
-				return res.render("driver_dash-drive", {driver: "Driver", pickup_address: "46 Taravista", drop_address: "52 Del ray"});
 
+				if (err) throw err; // remove on build
+				return res.render("driver_dash-drive", {driver: "Driver", pickup_address: "46 Taravista", drop_address: "52 Del ray"});
 			});
 		});
-	}
-	else if(sess.driver_session_id){
-		return pool.getConnection( (err, con) => {
+	} else if (sess.driver_session_id) {
+		return pool.getConnection((err, con) => {
 			if (err) throw err;
 
 			con.query(`SELECT * FROM riderequests`, function (err, d_ride_requests, fields) {
 				con.release();
-				
-				if(err) throw err; // remove on build
+
+				if (err) throw err; // remove on build
 
 				result.rides = d_ride_requests;
 				return res.render("driver_dash-avail_requests", result);
 			});
 		});
-	}
-	else{
+	} else {
 		return res.render("driver_dashboard");
 	}
 });
-app.post("/driver", (req, res)=>{
-
+app.post("/driver", (req, res) => {
 	let sess = req.session;
 
 	if (sess.access != 2) {
 		return res.redirect("/");
 	}
 
-	if(req.query.daction === 'startdata'){
+	if (req.query.daction === "startdata") {
 		pool.getConnection((err, con) => {
 			if (err) throw err;
-			
+
 			const driver_session_id = crypto.randomBytes(8).toString("hex"); // 16 character long random value
 			con.query(`INSERT INTO available_drivers (active_driver_session_id, driver_1_id, driver_2_id, car_id) VALUES ('${driver_session_id}', '${req.body.driver_1_id}','${req.body.driver_2_id}','${req.body.car_id}')`, function (err, result, fields) {
 				con.release();
-				
-				if(err) throw err; // remove on build
+
+				if (err) throw err; // remove on build
 				sess.driver_session_id = driver_session_id;
 				return res.redirect("/driver");
 			});
 		});
-	}
-	else if(req.query.daction === 'end'){
+	} else if (req.query.daction === "end") {
 		pool.getConnection((err, con) => {
 			if (err) throw err;
-	
+
 			con.query(`DELETE FROM available_drivers WHERE active_driver_session_id = '${sess.driver_session_id}'`, function (err, result, fields) {
 				con.release();
-	
-				if(err) throw err; // remove on build
+
+				if (err) throw err; // remove on build
 				sess.driver_session_id = undefined;
 				res.redirect("/driver");
 				return;
 			});
 		});
-	}
-	else if(req.query.daction === 'racc'){
-
-		if(sess.ride_allocated_session_id){
+	} else if (req.query.daction === "racc") {
+		if (sess.ride_allocated_session_id) {
 			pool.getConnection((err, con) => {
 				if (err) throw err;
 				con.query(`SELECT * FROM current_rides WHERE ride_allocated_session_id = '${sess.ride_allocated_session_id}'`, function (err, result, fields) {
 					con.release();
-					
-					if(err) throw err; // remove on build
-					return res.render("driver_dash-drive", {driver: "Driver", pickup_address: "46 Taravista", drop_address: "52 Del ray"});
 
+					if (err) throw err; // remove on build
+					return res.render("driver_dash-drive", {driver: "Driver", pickup_address: "46 Taravista", drop_address: "52 Del ray"});
 				});
 			});
-		}
-		else{
+		} else {
 			pool.getConnection((err, con) => {
 				if (err) throw err;
-	
+
 				let ride_allocated_session_id = crypto.randomBytes(8).toString("hex");
 				con.query(`INSERT INTO current_rides (ride_allocated_session_id, driver_1_id, driver_2_id, car_id, customer_id, pickup_location, drop_location, distance, est_time, est_cost) VALUES ('${ride_allocated_session_id}', ${req.query.did1}, ${req.query.did2}, ${req.query.dcid}, ${req.query.cid}, '${req.query.pic}', '${req.query.drp}', ${req.query.dst}, ${req.query.etd}, ${req.query.ect})`, function (err, result, fields) {
 					con.release();
-					
-					if(err) throw err; // remove on build
-					
+
+					if (err) throw err; // remove on build
+
 					// If driver successfully accepts the request, remove the drivers from available drivers
 					pool.getConnection((err, con) => {
 						if (err) throw err;
-			
+
 						con.query(`DELETE FROM available_drivers WHERE active_driver_session_id = '${sess.driver_session_id}'`, function (err, result, fields) {
 							con.release();
-							if(err) throw err; // remove on build
-							
+							if (err) throw err; // remove on build
+
 							sess.ride_allocated_session_id = ride_allocated_session_id;
 							return res.render("driver_dash-drive", {driver: "Driver", pickup_address: "46 Taravista", drop_address: "52 Del ray"});
 						});
@@ -618,17 +609,16 @@ app.post("/driver", (req, res)=>{
 				});
 			});
 		}
-	}
-	else if(req.query.daction === 'rdec'){
+	} else if (req.query.daction === "rdec") {
 		// TO-DO, YET TO IMPLEMENT
 	}
-})
+});
 
 app.get("/addnews", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
-	if (sess.access != 3){
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -638,9 +628,9 @@ app.get("/addnews", (req, res) => {
 
 app.post("/addnews", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
-	if (sess.access != 3){
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -655,10 +645,10 @@ app.post("/addnews", (req, res) => {
 
 app.get("/drivers", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
 
-	if (sess.access != 3){
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -676,8 +666,8 @@ app.get("/drivers", (req, res) => {
 });
 app.post("/drivers", (req, res) => {
 	let sess = req.session;
-	
-	if (sess.access != 3){
+
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -741,10 +731,10 @@ app.post("/drivers", (req, res) => {
 
 app.get("/admins", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
 
-	if (sess.access != 3){
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -762,8 +752,8 @@ app.get("/admins", (req, res) => {
 });
 app.post("/admins", (req, res) => {
 	let sess = req.session;
-	
-	if (sess.access != 3){
+
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -827,10 +817,10 @@ app.post("/admins", (req, res) => {
 
 app.get("/rides", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
-	
-	if (sess.access != 3){
+
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -845,10 +835,10 @@ app.get("/rides", (req, res) => {
 
 app.get("/requests", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
-	
-	if (sess.access != 3){
+
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -864,10 +854,10 @@ app.get("/requests", (req, res) => {
 // to change the images
 app.get("/background", (req, res) => {
 	loadDefaultValues(req);
-	
+
 	let sess = req.session;
-	
-	if (sess.access != 3){
+
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
@@ -920,8 +910,8 @@ app.get("/background", (req, res) => {
 });
 app.post("/background", upload_background.single("image"), (req, res) => {
 	let sess = req.session;
-	
-	if (sess.access != 3){
+
+	if (sess.access != 3) {
 		res.redirect("/");
 		return;
 	}
