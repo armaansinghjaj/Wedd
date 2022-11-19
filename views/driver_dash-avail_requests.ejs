@@ -10,25 +10,33 @@
     <% if (rides.length > 0) { %>
         <table>
             <tr>
-                <th>Request ID</th>
                 <th>Name</th>
-                <th>E-mail</th>
                 <th>Phone</th>
                 <th>Pick-up Address</th>
                 <th>Destination</th>
+                <th>Payment mode</th>
                 <th>Accept</th>
                 <th>Decline</th>
             </tr>
             <% rides.forEach(ride => { %>
                 <tr>
-                    <td><%=ride.request_id%></td>
                     <td><%=ride.name%></td>
-                    <td><%=ride.email%></td>
                     <td><%=ride.phone%></td>
-                    <td><%=ride.pick_address%></td>
-                    <td><%=ride.dest_address%></td>
+                    <td><%=ride.pickup%></td>
+                    <td><%=ride.destination%></td>
+                    <td><%=ride.payment%></td>
                     <td>
-                        <form action='/driver?daction=racc&did1=4&did2=5&dcid=1&cid=2&pic=1233Abc&drp=12333cba&dst=17.6&etd=30&ect=46.89' method='POST'>
+                        <!-- 
+                            did = driver id (1/2)
+                            dcid = driver car id
+                            cid = customer id
+                            pic = pickup address
+                            drp = drop off address
+                            dst = estimated distance
+                            etd = estimated time to drop
+                            etc = estimated total cost
+                         -->
+                        <form action='/driver?daction=racc&did1=4&did2=5&dcid=1&cid=2&pic=1233Abc&drp=12333cba&dst=17.6&etd=30&etc=46.89' method='POST'>
                             <input type='submit' value='Accept' name='accept'>
                             <input type='hidden' name='selected' value='<%=ride.request_id%>'>
                             <input type='hidden' name='action' value='accept'>

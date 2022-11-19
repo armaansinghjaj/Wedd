@@ -10,4 +10,6 @@ NOTES:
 
     5. https://programmingfields.com/encrypt-form-data-in-javascript-using-crypto-js-before-submit/#Encrypt_Form_Data_in_JavaScript
 
-    
+    6. https://stackoverflow.com/questions/19675317/auto-refresh-a-webpage-on-content-update-only
+
+    7. Hidden inputs for anti-csrf.

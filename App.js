@@ -93,8 +93,8 @@ function loadDefaultValues(req) {
 	req.session.edit_role_id = null;
 	req.session.edit_title = null;
 	if (!(req.session.access)) {
-		req.session.access = 1; 
-		req.session.user = "armaan@gmail.com";
+		req.session.access = null; 
+		req.session.user = null;
 	}
 	
 }
@@ -109,6 +109,7 @@ app.get("/", (req, res) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM background`, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 			res.render("home", {
 				year: new Date().getFullYear(),
 				title: "Homepage",
@@ -127,6 +128,7 @@ app.get("/profile", (req, res)=>{
 		if (err) throw err;
 		con.query(`SELECT * FROM customer where email = '${sess.user}'`, function (err, account, fields) {
 			con.release();
+			if(err) throw err;
 
 			return res.render("profile-customer", {customer_account: account[0], page: null});
 		});
@@ -140,6 +142,7 @@ app.get("/profile/account", (req, res)=>{
 		if (err) throw err;
 		con.query(`SELECT * FROM customer where email = '${sess.user}'`, function (err, account, fields) {
 			con.release();
+			if(err) throw err;
 
 			return res.render("profile-customer", {customer_account: account[0], page: "account"});
 		});
@@ -153,6 +156,7 @@ app.get("/profile/support", (req, res)=>{
 		if (err) throw err;
 		con.query(`SELECT * FROM customer where email = '${sess.user}'`, function (err, account, fields) {
 			con.release();
+			if(err) throw err;
 
 			return res.render("profile-customer", {customer_account: account[0], page: "support"});
 		});
@@ -179,6 +183,7 @@ app.post("/profile/account", upload_profile_picture.single("image"), (req, res)=
 			if (err) throw err;
 			con.query(`SELECT password FROM customer where email = '${sess.user}'`, function (err, user_password, fields) {
 				con.release();
+				if(err) throw err;
 	
 				if(req.body.customer_password.old === user_password[0].password){
 					if(req.body.customer_password.new === req.body.customer_password.confirm){
@@ -259,14 +264,14 @@ app.post("/profile/support", (req, res)=>{
 app.get("/ride", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
-	if (sess.access != 1) {
+	if (sess.access != 3) {
 		return res.redirect("/login");
 	}
 	return res.render("ride");
 });
 app.post("/ride", (req, res) => {
 	let sess = req.session;
-	if (sess.access != 1) {
+	if (sess.access != 3) {
 		res.redirect("login");
 	}
 	else {
@@ -278,20 +283,18 @@ app.post("/ride", (req, res) => {
 		let schedule = req.body.schedule_trip;
 		let mode_of_payement = req.body.pay_mode;
 
-		if (name === "" || isNaN(name) || email === "" || isNaN(email) || phone === "" || isNaN(phone) || pick === "" || isNaN(pick) || destination === "" || isNaN(destination) || mode_of_payement === undefined) {
+		if (name === "" || email === "" || phone === "" || pick === "" || destination === "" || mode_of_payement === undefined) {
 			res.send("error");
 			return;
 		}
 		else{
-			if(schedule === ""){
-				pool.getConnection((err, con) => {
-					if (err) throw err;
-					con.query(`INSERT INTO rideRequests (name, email, phone, pickup, destination, payment) VALUES ('${name}','${email}','${phone}','${pick}','${destination}', '${mode_of_payement}') `, function (err, result, fields) {
-						con.release();
-
-					});
+			pool.getConnection((err, con) => {
+				if (err) throw err;
+				con.query(`INSERT INTO rideRequests (name, email, phone, pickup, destination, payment) VALUES ('${name}','${email}','${phone}','${pick}','${destination}','${mode_of_payement}')`, function (err, result, fields) {
+					con.release();
+					if(err) throw err;
 				});
-			}
+			});
 		}
 
 		res.redirect("/ride");
@@ -303,6 +306,7 @@ app.get("/about", (req, res) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM background`, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 			res.render("about", {
 				year: new Date().getFullYear(),
 				title: "About us",
@@ -317,6 +321,7 @@ app.get("/contact", (req, res) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM background`, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 			res.render("contact", {
 				year: new Date().getFullYear(),
 				title: "Contact us",
@@ -344,6 +349,7 @@ app.post("/contact", (req, res) => {
 		if (err) throw err;
 		con.query(`INSERT INTO requests (request_id,name,address,phone,service_id,email,comments,updates) VALUES (0,'${name}','${address}','${phone}','${service_id}','${email}','${comments}','${updates}') `, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 		});
 	});
 
@@ -356,6 +362,7 @@ app.get("/news", (req, res) => {
 	//     con.query(`SELECT * FROM background`, function (err, result, fields) {
 
 	//         con.release();
+	// 		if(err) throw err;
 	//         res.render("news", {year: new Date().getFullYear(), title: "News", news_image: result[0].news_page});
 	//     });
 	// });
@@ -366,6 +373,7 @@ app.get("/news", (req, res) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM news`, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 			sess.newslist = result;
 			res.render("news", sess);
 		});
@@ -376,7 +384,7 @@ app.get("/roles", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
 	
-	if (sess.access != 3){
+	if (sess.access != 1){
 		res.redirect("/");
 	}
 	else{
@@ -384,6 +392,7 @@ app.get("/roles", (req, res) => {
 			if (err) throw err;
 			con.query(`SELECT * FROM user_roles`, function (err, result, fields) {
 				con.release();
+				if(err) throw err;
 				sess.roles = result;
 				res.render("admin_roles", sess);
 			});
@@ -424,9 +433,9 @@ app.post("/login", (req, res) => {
 				if (result.length > 0) {
 					if (result[0].password === req.body.password) {
 						sess.useremail = req.body.email;
-						sess.user = result[0].name;
+						sess.user = result[0].email;
 						if (result[0].role === 3) {
-							sess.access = 1;
+							sess.access = 3;
 							res.redirect("/");
 							return;
 						} else if (result[0].role === 2) {
@@ -434,7 +443,7 @@ app.post("/login", (req, res) => {
 							res.redirect("/driver");
 							return;
 						} else if (result[0].role === 1) {
-							sess.access = 3;
+							sess.access = 1;
 							res.redirect("/admin");
 							return;
 						}
@@ -481,6 +490,7 @@ app.post("/signup", (req, res) => {
 
 		con.query(`INSERT INTO customer (customer_id, email, name, password) VALUES (0, '${req.body.email}','${req.body.name}','${req.body.password}')`, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 
 			res.redirect("/");
 		});
@@ -491,7 +501,7 @@ app.get("/admin", (req, res) => {
 	loadDefaultValues(req);
 	
 	let sess = req.session;
-	if (sess.access != 3){
+	if (sess.access != 1){
 		res.redirect("/");
 		return;
 	}
@@ -509,11 +519,7 @@ app.get("/driver", (req, res)=>{
 		return res.redirect("/");
 	}
 
-	let result = {
-		rides: undefined
-	};
-
-	if(sess.ride_allocated_session_id){
+	if(sess.ride_allocated_session_id){ // if driver is active and is currently driving
 		return pool.getConnection((err, con) => {
 			if (err) throw err;
 			con.query(`SELECT * FROM current_rides WHERE ride_allocated_session_id = '${sess.ride_allocated_session_id}'`, function (err, result, fields) {
@@ -525,7 +531,10 @@ app.get("/driver", (req, res)=>{
 			});
 		});
 	}
-	else if(sess.driver_session_id){
+	else if(sess.driver_session_id){ // if driver is active, but has not rides
+		let result = {
+			rides: undefined
+		};
 		return pool.getConnection( (err, con) => {
 			if (err) throw err;
 
@@ -628,7 +637,7 @@ app.get("/addnews", (req, res) => {
 	loadDefaultValues(req);
 	
 	let sess = req.session;
-	if (sess.access != 3){
+	if (sess.access != 1){
 		res.redirect("/");
 		return;
 	}
@@ -640,7 +649,7 @@ app.post("/addnews", (req, res) => {
 	loadDefaultValues(req);
 	
 	let sess = req.session;
-	if (sess.access != 3){
+	if (sess.access != 1){
 		res.redirect("/");
 		return;
 	}
@@ -648,6 +657,7 @@ app.post("/addnews", (req, res) => {
 		if (err) throw err;
 		con.query(`INSERT INTO news (start_date, end_date, headline, message, color) VALUES ('${req.body.start_date}', '${req.body.end_date}','${req.body.headline}','${req.body.message}','${req.body.color}')`, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 			res.redirect("/admin");
 		});
 	});
@@ -667,6 +677,7 @@ app.get("/drivers", (req, res) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM employees WHERE role = 2 `, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 
 			sess.drivers = result;
 
@@ -688,6 +699,7 @@ app.post("/drivers", (req, res) => {
 			if (err) throw err;
 			con.query(`SELECT * FROM employees WHERE employee_id = '${req.body.selected}' `, function (err, result, fields) {
 				con.release();
+				if(err) throw err;
 
 				sess.edit_employee_id = result[0].employee_id;
 				sess.edit_email = result[0].email;
@@ -704,6 +716,7 @@ app.post("/drivers", (req, res) => {
 
 			con.query(`DELETE FROM employees WHERE employee_id = '${req.body.selected}' `, function (err, result, fields) {
 				con.release();
+				if(err) throw err;
 				res.redirect("/drivers");
 				return;
 			});
@@ -717,6 +730,7 @@ app.post("/drivers", (req, res) => {
 				if (err) throw err;
 				con.query(`UPDATE employees set name = '${req.body.edit_name}', email = '${req.body.edit_email}' WHERE employee_id = '${req.body.edit_employee_id}' `, function (err, result, fields) {
 					con.release();
+					if(err) throw err;
 
 					res.redirect("/drivers");
 					return;
@@ -732,6 +746,7 @@ app.post("/drivers", (req, res) => {
 				if (err) throw err;
 				con.query(`INSERT INTO employees (employee_id, email , name, password, role) VALUES (0,'${req.body.new_email}','${req.body.new_name}','${req.body.new_password}', 2)`, function (err, result, fields) {
 					con.release();
+					if(err) throw err;
 					res.redirect("/drivers");
 				});
 			});
@@ -744,7 +759,7 @@ app.get("/admins", (req, res) => {
 	
 	let sess = req.session;
 
-	if (sess.access != 3){
+	if (sess.access != 1){
 		res.redirect("/");
 		return;
 	}
@@ -753,6 +768,7 @@ app.get("/admins", (req, res) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM employees WHERE role = 1 `, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 
 			sess.admins = result;
 
@@ -763,7 +779,7 @@ app.get("/admins", (req, res) => {
 app.post("/admins", (req, res) => {
 	let sess = req.session;
 	
-	if (sess.access != 3){
+	if (sess.access != 1){
 		res.redirect("/");
 		return;
 	}
@@ -774,6 +790,7 @@ app.post("/admins", (req, res) => {
 			if (err) throw err;
 			con.query(`SELECT * FROM employees WHERE employee_id = '${req.body.selected}' `, function (err, result, fields) {
 				con.release();
+				if(err) throw err;
 
 				sess.edit_employee_id = result[0].employee_id;
 				sess.edit_email = result[0].email;
@@ -790,6 +807,7 @@ app.post("/admins", (req, res) => {
 
 			con.query(`DELETE FROM employees WHERE employee_id = '${req.body.selected}' `, function (err, result, fields) {
 				con.release();
+				if(err) throw err;
 				res.redirect("/admins");
 				return;
 			});
@@ -803,6 +821,7 @@ app.post("/admins", (req, res) => {
 				if (err) throw err;
 				con.query(`UPDATE employees set name = '${req.body.edit_name}', email = '${req.body.edit_email}' WHERE employee_id = '${req.body.edit_employee_id}' `, function (err, result, fields) {
 					con.release();
+					if(err) throw err;
 
 					res.redirect("/admins");
 					return;
@@ -818,6 +837,7 @@ app.post("/admins", (req, res) => {
 				if (err) throw err;
 				con.query(`INSERT INTO employees (employee_id, email , name, password, role) VALUES (0,'${req.body.new_email}','${req.body.new_name}','${req.body.new_password}', 1)`, function (err, result, fields) {
 					con.release();
+					if(err) throw err;
 					res.redirect("/admins");
 				});
 			});
@@ -830,7 +850,7 @@ app.get("/rides", (req, res) => {
 	
 	let sess = req.session;
 	
-	if (sess.access != 3){
+	if (sess.access != 1){
 		res.redirect("/");
 		return;
 	}
@@ -838,6 +858,7 @@ app.get("/rides", (req, res) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM rideRequests`, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 			res.render("ride_requests", {rides: result});
 		});
 	});
@@ -856,6 +877,7 @@ app.get("/requests", (req, res) => {
 		if (err) throw err;
 		con.query(`SELECT * FROM requests`, function (err, result, fields) {
 			con.release();
+			if(err) throw err;
 			res.render("contact_requests", {requests: result});
 		});
 	});
@@ -878,6 +900,7 @@ app.get("/background", (req, res) => {
 					if (err) throw err;
 					con.query(`SELECT * FROM background`, function (err, result, fields) {
 						con.release();
+						if(err) throw err;
 						res.render("bg-home", {images: result});
 					});
 				});
@@ -888,6 +911,7 @@ app.get("/background", (req, res) => {
 					if (err) throw err;
 					con.query(`SELECT * FROM background`, function (err, result, fields) {
 						con.release();
+						if(err) throw err;
 						res.render("bg-about", {images: result});
 					});
 				});
@@ -898,6 +922,7 @@ app.get("/background", (req, res) => {
 					if (err) throw err;
 					con.query(`SELECT * FROM background`, function (err, result, fields) {
 						con.release();
+						if(err) throw err;
 						res.render("bg-contact", {images: result});
 					});
 				});
@@ -908,6 +933,7 @@ app.get("/background", (req, res) => {
 					if (err) throw err;
 					con.query(`SELECT * FROM background`, function (err, result, fields) {
 						con.release();
+						if(err) throw err;
 						res.render("bg-news", {images: result});
 					});
 				});
