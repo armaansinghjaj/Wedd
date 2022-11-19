@@ -1,14 +1,21 @@
 <%- include("header") -%>
 
+<% if (driver_available === true) { %>
+    <input type="hidden" value="<%= startlat %>" name="startlat" id="startlat">
+    <input type="hidden" value="<%= startlng %>" name="startlng" id="startlng">
+    <input type="hidden" value="<%= destlat %>" name="destlat" id="destlat">
+    <input type="hidden" value="<%= destlng %>" name="destlng" id="destlng">
+    <input type="hidden" value="<%= h3tags %>" name="h3tags" id="h3tags">
+    <input type="hidden" value=1 id="routing">
+    <%- include("map") -%> 
 
-<input type="hidden" value="<%= startlat %>" id="startlat">
-<input type="hidden" value="<%= startlng %>" id="startlng">
-<input type="hidden" value="<%= destlat %>" id="destlat">
-<input type="hidden" value="<%= destlng %>" id="destlng">
-<input type="hidden" value=1 id="routing">
-<%- include("map") -%> 
+    <!-- quotation -->
+    <div class="quotation_block" id="quotation">
 
-<!-- quotation -->
+    </div>
 
-<!-- confirm button -->
+    <!-- confirm button -->
+<% } else {%>
+    <p>Please wait while we're searching drivers for you...</p>
+<% } %>
 <%- include("footer") -%>

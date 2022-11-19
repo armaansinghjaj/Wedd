@@ -272,3 +272,5 @@ VALUES(NULL,'Honda', 'Civic', 'hcx-186bh', 2016, 'Pale yellow', 'A', 'CAR-2016')
 
 INSERT INTO rideRequests VALUES (1, 'First', '1@gmail.com', 1111111111, '1233', '12333', 'CASH');
 INSERT INTO rideRequests VALUES (2, 'Second', '2@gmail.com', 1111111111, '1233', '12333', 'DEBIT');
+
+INSERT INTO news (start_date, end_date, headline, message, color) VALUES ('2022-11-23T21:49', '2022-12-23T21:49', 'This is a test headline', 'This is a test message.This is a test message.This is a test message.', '#fff')

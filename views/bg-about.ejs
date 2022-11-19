@@ -14,7 +14,7 @@
                         <th>About page</th>
                         <td><%= image.about_page %></td>
                         <td>
-                            <form action="/background?page=about" method="POST" enctype="multipart/form-data">
+                            <form action="/admin/background?page=about" method="POST" enctype="multipart/form-data">
                                 <input type="file" accept="image/x-png,image/gif,image/jpeg,image/jpg" value="Edit" name="image">
                                 <input type="hidden" name="action" value="for_about">
                                 <input type="submit" value="Add">
