@@ -1,58 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drive | Wedd</title>
-</head>
-<body>
-    <h2>Welcome Mr. <%= driver %></h2>
-    <p>Your ride</p>
-    <table>
-        <tr>
-            <th>FROM</th>
-            <th>TO</th>
-        </tr>
-        <tr>
-            <td><%= pickup_address %> </td>
-            <td><%= drop_address %> </td>
-        </tr>
-    </table>
-    <div class="starter">
-        <p>Slide to drive</p>
-        <p><input type="range" value="0" class="pullee"/></p>
-    </div>
-    <div class="map">
-        <span id="map_section">MAP HERE</span>
-        <div id="buttons">
-            <form action="/driver?daction=completeRide&rsid=" method="POST">
-                <input type="submit" value="Complete Ride">
-            </form>
-            <form action="/driver?daction=cancelRide&rsid=" method="POST">
-                <input type="submit" value="Cancel Ride">
-            </form>
-        </div>
-    </div>
-</body>
-<script>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css" />
+		<title>Drive | Wedd</title>
+	</head>
+	<body>
+		<h2>Welcome Mr. <%= driver %></h2>
+		<p>Your ride</p>
+		<table>
+			<tr>
+				<th>FROM</th>
+				<th>TO</th>
+			</tr>
+			<tr>
+				<td><%= pickup_address %></td>
+				<td><%= drop_address %></td>
+			</tr>
+		</table>
+		<div class="starter">
+			<p>Slide to drive</p>
+			<p><input type="range" value="0" class="pullee" /></p>
+		</div>
+		<div class="map">
+			<span id="map_section">
+				<input type="hidden" value="<%= startlat %>" id="startlat" />
+				<input type="hidden" value="<%= startlng %>" id="startlng" />
+				<input type="hidden" value="<%= destlat %>" id="destlat" />
+				<input type="hidden" value="<%= destlng %>" id="destlng" />
+				<input type="hidden" value="1" id="routing" />
+				<%- include("map") -%>
+			</span>
+			<div id="buttons">
+				<form action="/driver?daction=completeRide&rsid=" method="POST">
+					<input type="submit" value="Complete Ride" />
+				</form>
+				<form action="/driver?daction=cancelRide&rsid=" method="POST">
+					<input type="submit" value="Cancel Ride" />
+				</form>
+			</div>
+		</div>
+	</body>
+	<script>
+		window.onload = () => {
+			document.getElementsByClassName("map")[0].style.display = "none";
+		};
 
-    window.onload = () => {document.getElementsByClassName('map')[0].style.display = "none";}    
+		var inputRange = document.getElementsByClassName("pullee")[0],
+			maxValue = 150,
+			speed = 12;
 
-    var inputRange = document.getElementsByClassName('pullee')[0],
-    maxValue = 150,
-    speed = 12
+		// set min/max value
+		inputRange.min = 0;
+		inputRange.max = maxValue;
 
-    // set min/max value
-    inputRange.min = 0;
-    inputRange.max = maxValue;
+		document.getElementsByClassName("pullee")[0].addEventListener("mouseup", () => {
+			if (inputRange.value >= maxValue) {
+				alert("Setting up route. Please wear your seat belt!");
+				document.getElementsByClassName("map")[0].style.display = "block";
+				document.getElementsByClassName("starter")[0].style.display = "none";
+			}
+		});
+	</script>
+	<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+	<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+	<script type="text/javascript" src="JS/geolet.js"></script>
+	<script>
+		let userlocationlat = null;
+		let userlocationlng = null;
+		let startlat = null;
+		let startlng = null;
+		let destlat = null;
+		let destlng = null;
+		var map = L.map("map").setView([51.0447, -114.0719], 12); //change longitude latitude to the location of the person
+		L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+			maxZoom: 25,
+		}).addTo(map);
 
-    document.getElementsByClassName('pullee')[0].addEventListener('mouseup', ()=>{
-        if(inputRange.value >= maxValue){
-            alert('Setting up route. Please wear your seat belt!');
-            document.getElementsByClassName('map')[0].style.display = "block";
-            document.getElementsByClassName('starter')[0].style.display = "none";
-        }
-    })
-</script>
+		L.geolet({position: "bottomleft", popup: false}).addTo(map);
+
+		userlocationlat = map.locate()._lastCenter.lat;
+		userlocationlng = map.locate()._lastCenter.lng;
+
+		function addRoute() {
+			startlat = parseFloat(document.getElementById("startlat").value);
+			startlng = parseFloat(document.getElementById("startlng").value);
+			destlat = parseFloat(document.getElementById("destlat").value);
+			destlng = parseFloat(document.getElementById("destlng").value);
+			console.log(destlat);
+			L.Routing.control({
+				waypoints: [L.latLng(startlat, startlng), L.latLng(destlat, destlng)], //for routing change longitude and latitude
+			}).addTo(map);
+		}
+
+		if (document.getElementById("routing").value == "1") {
+			addRoute();
+		}
+	</script>
 </html>
