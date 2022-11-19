@@ -9,6 +9,15 @@ const session = require("express-session");
 // SET VIEW ENGINE FOR USING 'EJS' FILES.
 app.set("view engine", "ejs"); // DELETE ON BUILD
 
+// SET-UP COOKIE SETTINGS
+const oneDay = 1000 * 60 * 60 * 24;
+let sess = {
+	secret: "Thisisasecret",
+	resave: false,
+	saveUninitialized: true,
+	cookie: {secure: false, maxAge: oneDay},
+};
+
 // SET UP MIDDLEWARE
 app.use(session(sess));
 app.use(passport.initialize());
@@ -22,15 +31,6 @@ const port = process.env.port || 3360;
 
 // COMMON IMPORTS
 const { v4: uuidv4 } = require('uuid');
-
-// SET-UP COOKIE SETTINGS
-const oneDay = 1000 * 60 * 60 * 24;
-let sess = {
-	secret: "Thisisasecret",
-	resave: false,
-	saveUninitialized: true,
-	cookie: {secure: false, maxAge: oneDay},
-};
 
 function setPickupLocation(req,values) {
 	req.session.startlat = values[0].lat,
