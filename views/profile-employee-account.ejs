@@ -1,0 +1,28 @@
+<h3>Change profile</h3>
+<hr>
+<form action="/employeeprofile/account?option=details" method="post">
+    <ul>
+        <li>Your name: <input type="text" name="employee_name" id="employee_name" value="<%= employee_account.name %>"></li>
+        <li>Your email: <input type="email" name="employee_email" id="employee_email" value="<%= employee_account.email %>"></li>
+        <input type="submit" value="Update account">
+    </ul>
+</form>
+<h3>Change password</h3>
+<hr>
+<form action="/employeeprofile/account?option=password" method="post">
+    <ul>
+        <li>Old password: <input type="password" name="employee_password[old]" id="old_password" value=""></li>
+        <li>New password: <input type="password" name="employee_password[new]" id="new_password_field" value=""></li>
+        <li>Confirm password: <input type="password" name="employee_password[confirm]" id="confirm_password" value=""></li>
+        <input type="submit" value="Update password">
+    </ul>
+</form>
+<h3>Delete account</h3>
+<hr>
+<Button class="delete_account_btn">Delete account</Button>
+<form action="/employeeprofile/account?option=delete" method="post">
+    <div class="delete_confirmation" style="display: none;">
+        <p>Once you delete your account, there is no going back. Please be certain.</p>
+        <input type="submit" value="Confirm"> <input type="reset" class="delete_account_btn" value="Cancel">
+    </div>
+</form>

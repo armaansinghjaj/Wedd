@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee profile</title>
+</head>
+<body>
+    <h3>Hey, <u><%= employee_account.name %></u></h3>
+    <ul>
+        <li><a href="/employeeprofile/account">Account settings</a></li>
+    </ul>
+
+    <% if(page === "account") {%>
+        <%- include("profile-employee-account") -%>
+    <% } %>
+</body>
+</html>

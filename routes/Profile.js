@@ -10,6 +10,9 @@ const readFile = (filename) => fs.readFileSync(filename).toString("UTF8");
 router.get("/", (req, res) => {
 	loadDefaultValues(req);
 	let sess = req.session;
+	if(sess.access === 1 || sess.access === 2){
+        return res.redirect("/employeeprofile");
+    }
 
 	pool.getConnection((err, con) => {
 		if (err) throw err;
