@@ -1,46 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css" />
-	<title>WeDD - Book your ride</title>
-	<style>
-		#map {
-			height: 50vh;
-			width: 50vw;
-		}
-		.navbar{
-			display: flex;
-			flex-direction: row;
-			border: 1px solid black;
-			border-radius: 5px;
-		}
-		.navbar h1{
-			padding-right: 20px;
-		}
-		.navbar li{
-			margin-top: 22px;
-		}
-		.navbar_item{
-			list-style: none;
-			padding: 10px;
-		}
-		.navbar_item a{
-			font-size: 20px;
-			color: black;
-		}
-		.footer{
-			padding: 10px;
-			border: 1px solid black;
-			border-radius: 5px;
-		}
-	</style>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
-</head>
-<body>
-	<%- include("navbar") -%>
-	<%- include("permanent_hidden_field") -%>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+		<title>WeDD - Book your ride</title>
+		<style>
+			#map {
+				height: 50vh;
+				width: 50vw;
+			}
+			.navbar {
+				display: flex;
+				flex-direction: row;
+				border: 1px solid black;
+				border-radius: 5px;
+			}
+			.navbar h1 {
+				padding-right: 20px;
+			}
+			.navbar li {
+				margin-top: 22px;
+			}
+			.navbar_item {
+				list-style: none;
+				padding: 10px;
+			}
+			.navbar_item a {
+				font-size: 20px;
+				color: black;
+			}
+			.footer {
+				padding: 10px;
+				border: 1px solid black;
+				border-radius: 5px;
+			}
+			.leaflet-touch .leaflet-control-geocoder {
+				visibility: hidden;
+			}
+		</style>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+	</head>
+	<body>
+		<%- include("navbar") -%> <%- include("permanent_hidden_field") -%>
+	</body>
+</html>

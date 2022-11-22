@@ -211,7 +211,7 @@ CREATE TABLE IF NOT EXISTS `wedddb`.`rideRequests` (
   `request_id` INT(16) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(50) NOT NULL,
-  `phone` INT(20) NOT NULL,
+  `phone` VARCHAR(20) NOT NULL,
   `pickup` VARCHAR(500) NOT NULL,
   `destination` VARCHAR(500) NOT NULL,
   `payment` VARCHAR(500) NOT NULL,
