@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const loadDefaultValues = require("../modules/loadDefaultValues");
 const pool = require("../modules/SQLconnectionpool");
+const crypto = require("crypto");
 
 router.get("/", (req, res) => {
 	loadDefaultValues(req);
